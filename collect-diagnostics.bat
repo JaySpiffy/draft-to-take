@@ -5,6 +5,10 @@ cd /d "%~dp0"
 
 if "%DRAFT_TO_TAKE_HOME%"=="" set "DRAFT_TO_TAKE_HOME=%USERPROFILE%\DraftToTake"
 if "%DRAFT_TO_TAKE_SHARED_DIR%"=="" set "DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_HOME%\shared"
+set "DRAFT_TO_TAKE_RUNTIME_ENV=.draft-to-take-runtime.env"
+set "COMPOSE_ENV_FILES="
+if exist ".env" set "COMPOSE_ENV_FILES=--env-file .env"
+if exist "%DRAFT_TO_TAKE_RUNTIME_ENV%" set "COMPOSE_ENV_FILES=%COMPOSE_ENV_FILES% --env-file %DRAFT_TO_TAKE_RUNTIME_ENV%"
 
 set "OUT_DIR=%DRAFT_TO_TAKE_HOME%\diagnostics"
 if not exist "%OUT_DIR%" mkdir "%OUT_DIR%"
@@ -33,28 +37,28 @@ echo.
     docker run --rm --gpus all nvidia/cuda:12.8.0-base-ubuntu22.04 nvidia-smi
     echo.
     echo == Compose PS ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx ps
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx ps
     echo.
     echo == Compose Frontend Port ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx port frontend 80
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx port frontend 80
     echo.
     echo == Compose Backend Port ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx port backend 8000
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx port backend 8000
     echo.
     echo == Backend Logs ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx logs --tail 250 backend
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx logs --tail 250 backend
     echo.
     echo == Frontend Logs ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx logs --tail 100 frontend
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx logs --tail 100 frontend
     echo.
     echo == Script LLM Logs ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm logs --tail 150 script-llm
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile llm logs --tail 150 script-llm
     echo.
     echo == OmniVoice Logs ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile omnivoice logs --tail 150 omnivoice
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile omnivoice logs --tail 150 omnivoice
     echo.
     echo == SFX Logs ==
-    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile sfx logs --tail 150 sfx
+    docker compose %COMPOSE_ENV_FILES% -f docker-compose.yml -f docker-compose.gpu.yml --profile sfx logs --tail 150 sfx
 ) > "%OUT_FILE%" 2>&1
 
 echo [INFO] Diagnostics collected.

@@ -57,12 +57,6 @@ if "%INDTEXTS_BACKEND_HOST_PORT%"=="" (
     exit /b 1
 )
 
-(
-    echo INDTEXTS_FRONTEND_HOST_PORT=%INDTEXTS_FRONTEND_HOST_PORT%
-    echo INDTEXTS_BACKEND_HOST_PORT=%INDTEXTS_BACKEND_HOST_PORT%
-    echo DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_SHARED_DIR%
-) > "%DRAFT_TO_TAKE_RUNTIME_ENV%"
-
 docker info >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Docker is not running. Please start Docker Desktop and try again.
@@ -78,18 +72,19 @@ if errorlevel 1 (
     echo           SFX/music generation is disabled unless you opt in manually.
     set "INDTEXTS_USE_GPU=false"
     set "INDTEXTS_DEVICE=cpu"
+    if "%INDTEXTS_SFX_ENABLED%"=="" set "INDTEXTS_SFX_ENABLED=false"
     set "COMPOSE_FILES=-f docker-compose.yml"
 ) else (
     echo [INFO] NVIDIA GPU detected.
     set "INDTEXTS_USE_GPU=true"
     if "%INDTEXTS_DEVICE%"=="" set "INDTEXTS_DEVICE=auto"
     if "%INDTEXTS_USE_DEEPSPEED%"=="" set "INDTEXTS_USE_DEEPSPEED=true"
+    if "%INDTEXTS_SFX_ENABLED%"=="" set "INDTEXTS_SFX_ENABLED=true"
     set "COMPOSE_FILES=-f docker-compose.yml -f docker-compose.gpu.yml"
 )
 
 if "%INDTEXTS_SCRIPT_LLM_ENABLED%"=="" set "INDTEXTS_SCRIPT_LLM_ENABLED=true"
 if "%INDTEXTS_OMNIVOICE_ENABLED%"=="" set "INDTEXTS_OMNIVOICE_ENABLED=true"
-if "%INDTEXTS_SFX_ENABLED%"=="" set "INDTEXTS_SFX_ENABLED=false"
 
 set "COMPOSE_PROFILES_ARGS="
 if /I not "%INDTEXTS_SCRIPT_LLM_ENABLED%"=="false" (
@@ -108,17 +103,31 @@ if /I not "%INDTEXTS_OMNIVOICE_ENABLED%"=="false" (
 
 if /I "%INDTEXTS_SFX_ENABLED%"=="true" (
     set "COMPOSE_PROFILES_ARGS=%COMPOSE_PROFILES_ARGS% --profile sfx"
-    echo [WARNING] SFX/music sidecar enabled. These model-backed tools are experimental and license-dependent.
+    echo [INFO] SFX/music sidecar: enabled
 ) else (
-    echo [INFO] SFX/music sidecar: disabled by default for beta
+    echo [INFO] SFX/music sidecar: disabled
 )
+
+(
+    echo INDTEXTS_FRONTEND_HOST_PORT=%INDTEXTS_FRONTEND_HOST_PORT%
+    echo INDTEXTS_BACKEND_HOST_PORT=%INDTEXTS_BACKEND_HOST_PORT%
+    echo DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_SHARED_DIR%
+    echo INDTEXTS_USE_GPU=%INDTEXTS_USE_GPU%
+    echo INDTEXTS_DEVICE=%INDTEXTS_DEVICE%
+    echo INDTEXTS_USE_DEEPSPEED=%INDTEXTS_USE_DEEPSPEED%
+    echo INDTEXTS_SCRIPT_LLM_ENABLED=%INDTEXTS_SCRIPT_LLM_ENABLED%
+    echo INDTEXTS_OMNIVOICE_ENABLED=%INDTEXTS_OMNIVOICE_ENABLED%
+    echo INDTEXTS_SFX_ENABLED=%INDTEXTS_SFX_ENABLED%
+) > "%DRAFT_TO_TAKE_RUNTIME_ENV%"
+
+set "COMPOSE_ENV_FILES=--env-file .env --env-file %DRAFT_TO_TAKE_RUNTIME_ENV%"
 
 echo.
 echo [INFO] Shared files live here:
 echo        %DRAFT_TO_TAKE_SHARED_DIR%
 echo.
 echo [INFO] Pulling and starting Draft to Take beta images...
-docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% pull
+docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% pull
 if errorlevel 1 (
     echo [ERROR] Docker image pull failed.
     echo         If these are GHCR images, confirm the packages are public or run docker login ghcr.io.
@@ -126,7 +135,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% up -d
+docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% up -d
 if errorlevel 1 (
     echo [ERROR] Docker Compose failed to start the beta stack.
     pause
@@ -134,6 +143,7 @@ if errorlevel 1 (
 )
 
 call :CheckComposePort backend 8000 DRAFT_TO_TAKE_BACKEND_BINDING
+if /I "%DRAFT_TO_TAKE_BACKEND_BINDING%"=="invalid IP:0" set "DRAFT_TO_TAKE_BACKEND_BINDING="
 if "%DRAFT_TO_TAKE_BACKEND_BINDING%"=="" (
     echo [ERROR] Backend container started, but Docker did not publish its host port.
     echo         Run collect-diagnostics.bat and include the Compose PS section in your bug report.
@@ -142,16 +152,18 @@ if "%DRAFT_TO_TAKE_BACKEND_BINDING%"=="" (
 )
 
 call :CheckComposePort frontend 80 DRAFT_TO_TAKE_FRONTEND_BINDING
+if /I "%DRAFT_TO_TAKE_FRONTEND_BINDING%"=="invalid IP:0" set "DRAFT_TO_TAKE_FRONTEND_BINDING="
 if "%DRAFT_TO_TAKE_FRONTEND_BINDING%"=="" (
     echo [WARNING] Frontend container is running, but Docker did not publish its browser port.
     echo           Recreating the frontend container to repair the port binding...
-    docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% up -d --force-recreate frontend
+    docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% up -d --force-recreate frontend
     if errorlevel 1 (
         echo [ERROR] Frontend recreate failed.
         pause
         exit /b 1
     )
     call :CheckComposePort frontend 80 DRAFT_TO_TAKE_FRONTEND_BINDING
+    if /I "%DRAFT_TO_TAKE_FRONTEND_BINDING%"=="invalid IP:0" set "DRAFT_TO_TAKE_FRONTEND_BINDING="
 )
 
 if "%DRAFT_TO_TAKE_FRONTEND_BINDING%"=="" (
@@ -189,14 +201,14 @@ if /I not "%DRAFT_TO_TAKE_OPEN_BROWSER%"=="false" (
 )
 
 timeout /t 5 /nobreak >nul
-docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% logs backend --tail 30
+docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% logs backend --tail 30
 
 pause
 exit /b 0
 
 :CheckComposePort
 set "%~3="
-for /f "tokens=* delims=" %%i in ('docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% port %~1 %~2 2^>nul') do (
+for /f "tokens=* delims=" %%i in ('docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% port %~1 %~2 2^>nul') do (
     if not defined %~3 set "%~3=%%i"
 )
 exit /b 0
