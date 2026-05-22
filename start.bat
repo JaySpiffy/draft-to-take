@@ -78,18 +78,19 @@ if errorlevel 1 (
     echo           SFX/music generation is disabled unless you opt in manually.
     set "INDTEXTS_USE_GPU=false"
     set "INDTEXTS_DEVICE=cpu"
+    if "%INDTEXTS_SFX_ENABLED%"=="" set "INDTEXTS_SFX_ENABLED=false"
     set "COMPOSE_FILES=-f docker-compose.yml"
 ) else (
     echo [INFO] NVIDIA GPU detected.
     set "INDTEXTS_USE_GPU=true"
     if "%INDTEXTS_DEVICE%"=="" set "INDTEXTS_DEVICE=auto"
     if "%INDTEXTS_USE_DEEPSPEED%"=="" set "INDTEXTS_USE_DEEPSPEED=true"
+    if "%INDTEXTS_SFX_ENABLED%"=="" set "INDTEXTS_SFX_ENABLED=true"
     set "COMPOSE_FILES=-f docker-compose.yml -f docker-compose.gpu.yml"
 )
 
 if "%INDTEXTS_SCRIPT_LLM_ENABLED%"=="" set "INDTEXTS_SCRIPT_LLM_ENABLED=true"
 if "%INDTEXTS_OMNIVOICE_ENABLED%"=="" set "INDTEXTS_OMNIVOICE_ENABLED=true"
-if "%INDTEXTS_SFX_ENABLED%"=="" set "INDTEXTS_SFX_ENABLED=false"
 
 set "COMPOSE_PROFILES_ARGS="
 if /I not "%INDTEXTS_SCRIPT_LLM_ENABLED%"=="false" (
@@ -108,9 +109,9 @@ if /I not "%INDTEXTS_OMNIVOICE_ENABLED%"=="false" (
 
 if /I "%INDTEXTS_SFX_ENABLED%"=="true" (
     set "COMPOSE_PROFILES_ARGS=%COMPOSE_PROFILES_ARGS% --profile sfx"
-    echo [WARNING] SFX/music sidecar enabled. These model-backed tools are experimental and license-dependent.
+    echo [INFO] SFX/music sidecar: enabled
 ) else (
-    echo [INFO] SFX/music sidecar: disabled by default for beta
+    echo [INFO] SFX/music sidecar: disabled
 )
 
 echo.
