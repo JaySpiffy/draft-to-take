@@ -35,6 +35,12 @@ echo.
     echo == Compose PS ==
     docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx ps
     echo.
+    echo == Compose Frontend Port ==
+    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx port frontend 80
+    echo.
+    echo == Compose Backend Port ==
+    docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx port backend 8000
+    echo.
     echo == Backend Logs ==
     docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile llm --profile omnivoice --profile sfx logs --tail 250 backend
     echo.

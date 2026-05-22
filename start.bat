@@ -19,6 +19,7 @@ for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do (
 
 if "%DRAFT_TO_TAKE_HOME%"=="" set "DRAFT_TO_TAKE_HOME=%USERPROFILE%\DraftToTake"
 if "%DRAFT_TO_TAKE_SHARED_DIR%"=="" set "DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_HOME%\shared"
+set "DRAFT_TO_TAKE_RUNTIME_ENV=.draft-to-take-runtime.env"
 
 for %%d in (
     "%DRAFT_TO_TAKE_SHARED_DIR%\models"
@@ -55,6 +56,12 @@ if "%INDTEXTS_BACKEND_HOST_PORT%"=="" (
     pause
     exit /b 1
 )
+
+(
+    echo INDTEXTS_FRONTEND_HOST_PORT=%INDTEXTS_FRONTEND_HOST_PORT%
+    echo INDTEXTS_BACKEND_HOST_PORT=%INDTEXTS_BACKEND_HOST_PORT%
+    echo DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_SHARED_DIR%
+) > "%DRAFT_TO_TAKE_RUNTIME_ENV%"
 
 docker info >nul 2>&1
 if errorlevel 1 (
@@ -126,6 +133,37 @@ if errorlevel 1 (
     exit /b 1
 )
 
+call :CheckComposePort backend 8000 DRAFT_TO_TAKE_BACKEND_BINDING
+if "%DRAFT_TO_TAKE_BACKEND_BINDING%"=="" (
+    echo [ERROR] Backend container started, but Docker did not publish its host port.
+    echo         Run collect-diagnostics.bat and include the Compose PS section in your bug report.
+    pause
+    exit /b 1
+)
+
+call :CheckComposePort frontend 80 DRAFT_TO_TAKE_FRONTEND_BINDING
+if "%DRAFT_TO_TAKE_FRONTEND_BINDING%"=="" (
+    echo [WARNING] Frontend container is running, but Docker did not publish its browser port.
+    echo           Recreating the frontend container to repair the port binding...
+    docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% up -d --force-recreate frontend
+    if errorlevel 1 (
+        echo [ERROR] Frontend recreate failed.
+        pause
+        exit /b 1
+    )
+    call :CheckComposePort frontend 80 DRAFT_TO_TAKE_FRONTEND_BINDING
+)
+
+if "%DRAFT_TO_TAKE_FRONTEND_BINDING%"=="" (
+    echo [ERROR] Frontend container is healthy inside Docker, but no Windows browser port is published.
+    echo         Try setting INDTEXTS_FRONTEND_HOST_PORT=3001 in .env, then run start.bat again.
+    echo         If it still fails, run collect-diagnostics.bat and include the Compose PS section.
+    pause
+    exit /b 1
+)
+
+if "%DRAFT_TO_TAKE_OPEN_BROWSER%"=="" set "DRAFT_TO_TAKE_OPEN_BROWSER=true"
+
 echo.
 echo ============================================
 echo   Draft to Take beta is starting
@@ -135,6 +173,7 @@ echo   Frontend:  http://localhost:%INDTEXTS_FRONTEND_HOST_PORT%
 echo   Backend:   http://localhost:%INDTEXTS_BACKEND_HOST_PORT%
 echo   API Docs:  http://localhost:%INDTEXTS_BACKEND_HOST_PORT%/docs
 echo   Shared:    %DRAFT_TO_TAKE_SHARED_DIR%
+echo   Docker frontend binding: %DRAFT_TO_TAKE_FRONTEND_BINDING%
 echo.
 echo   First start may download large models.
 echo   Keep this window open if you want to watch logs.
@@ -144,7 +183,20 @@ echo   Stop:      stop.bat
 echo ============================================
 echo.
 
+if /I not "%DRAFT_TO_TAKE_OPEN_BROWSER%"=="false" (
+    echo [INFO] Opening Draft to Take in your browser...
+    start "" "http://localhost:%INDTEXTS_FRONTEND_HOST_PORT%"
+)
+
 timeout /t 5 /nobreak >nul
 docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% logs backend --tail 30
 
 pause
+exit /b 0
+
+:CheckComposePort
+set "%~3="
+for /f "tokens=* delims=" %%i in ('docker compose %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% port %~1 %~2 2^>nul') do (
+    if not defined %~3 set "%~3=%%i"
+)
+exit /b 0

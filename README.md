@@ -123,7 +123,7 @@ All beta container images are public and pullable from GitHub Container Registry
 
 ## Who This Beta Is For
 
-This first beta is best for people who are comfortable with Docker Desktop and local AI tools. It is not a one-click desktop installer yet.
+This first beta is best for people who are comfortable with Docker Desktop and local AI tools. It is not a signed one-click desktop installer yet.
 
 Good testers:
 
@@ -155,8 +155,9 @@ The launcher:
 - Pulls the prebuilt beta images.
 - Starts the backend, frontend, Qwen sidecar, and OmniVoice sidecar.
 - Leaves SFX/music disabled unless you opt in.
+- Opens the local frontend URL after a successful start.
 
-If ports `3000` or `8001` are busy, the launcher tries nearby ports and prints the actual URLs.
+If the port values are blank in `.env`, the launcher tries nearby ports and prints the actual URLs. Keep them blank unless you need stable URLs.
 
 ## Where Your Files Go
 
@@ -264,6 +265,20 @@ stop.bat
 
 This stops containers but does not delete shared models, voices, projects, or outputs.
 
+## Opening The App Or Shared Folder
+
+If the containers are already running, use:
+
+```text
+open.bat
+```
+
+To open your persistent shared folder, use:
+
+```text
+open-shared-folder.bat
+```
+
 ## Diagnostics
 
 If something breaks, run:
@@ -300,11 +315,13 @@ This is expected on a fresh install. Docker images and model files are large. Ke
 
 ### Frontend URL Does Not Open
 
-Check the terminal output. If port `3000` was busy, the launcher may choose another port such as:
+Check the terminal output. The launcher may choose another port if `3000` is busy, such as:
 
 ```text
 http://localhost:3001
 ```
+
+If the browser shows `Cannot GET /` on `localhost:3000`, check the `Docker frontend binding:` line printed by `start.bat`. If it is missing or points at a different port, run `collect-diagnostics.bat` and include the `Compose PS` section in the issue.
 
 ### Model Download Needs Authentication
 

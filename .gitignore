@@ -1,4 +1,7 @@
 .env
+.draft-to-take-runtime.env
 *.log
 diagnostics/
 shared/
+installer/windows/dist/
+installer/windows/output/
