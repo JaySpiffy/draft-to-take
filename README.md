@@ -111,7 +111,9 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.8` is ready for a small closed beta with Docker-capable testers.
+`v3.0.0-beta.9` is ready for a small closed beta with Docker-capable testers.
+
+This update improves Script Canvas project saving, current-draft recovery, raw script editing, timeline sync warnings, and selected-clip pause controls.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
@@ -253,7 +255,7 @@ Your shared folder under `%USERPROFILE%\DraftToTake\shared` is not deleted.
 If a new release uses a new Docker image tag, check `.env` and update:
 
 ```text
-DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.8
+DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.9
 ```
 
 ## Stopping
