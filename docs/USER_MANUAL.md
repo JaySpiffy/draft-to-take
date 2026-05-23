@@ -19,9 +19,10 @@ You can also skip the AI Thread and paste or import your own script directly.
 5. Open `Characters` to turn those voices into cast profiles.
 6. Open `Studio` and start a blank Script Canvas project.
 7. Write, paste, import, or ask the optional AI Thread to draft your script.
-8. Place the active scene or full episode on the embedded timeline.
-9. Detect emotions if you want Qwen to set IndexTTS2 delivery vectors.
-10. Generate audio, listen, lock good takes, retry weak takes, then download the final mix.
+8. Click `Save Project` when you want it to appear in Home and Recent Projects.
+9. Place the active scene or full episode on the embedded timeline.
+10. Detect emotions if you want Qwen to set IndexTTS2 delivery vectors.
+11. Generate audio, listen, lock good takes, retry weak takes, then download the final mix.
 
 First launch can be slow because Docker images and model files are large. Keep the launcher terminal open while it pulls images, downloads models, and starts services.
 
@@ -32,6 +33,7 @@ The Home page is a launch pad:
 - `Studio` opens the Script Canvas workflow.
 - `Voice Studio` opens reusable voice creation and source clip prep.
 - `Characters` opens cast profiles linked to voices.
+- `Continue Current Draft` returns to the latest local Script Canvas draft, even before you have formally saved it.
 - `Recent Projects` opens saved Script Canvas projects.
 - Delete buttons let you remove old recent projects when the list gets noisy.
 
@@ -152,6 +154,8 @@ Speaker Label: spoken words go here
 
 Use exact character labels. Keep lines short and speakable.
 
+Edits made in the Script Source/raw editor update the active scene immediately. If you already placed that scene on the timeline, the app may show a timeline sync warning until the timeline is rebuilt or updated.
+
 Bad:
 
 ```text
@@ -193,10 +197,12 @@ Bolt Crumple: Then why did the letterbox whisper my punishment nickname? <!-- em
 
 ### Canvas Actions
 
+- `Save Project` stores the current Script Canvas project so it appears on Home and in Recent Projects.
 - `Place Active Scene` puts the current scene on the timeline.
 - `Full Episode Timeline` places every drafted chapter and scene.
 - `Detect Active Scene Emotions` detects vectors only for the active scene.
 - `Detect Timeline Emotions` detects vectors across the loaded timeline.
+- `Rebuild Timeline` appears when script edits mean the timeline is out of sync.
 - `Generate Audio` renders missing dialogue first, then batches sound cues.
 - `Judge Takes` checks generated takes without replacing them.
 - `Retry Bad Takes` keeps locked good takes and regenerates weak unlocked ones.
@@ -222,10 +228,12 @@ Manual sliders let you adjust a selected line. If a line already has manual emot
 
 ## SFX, Ambience, And Music
 
-SFX, ambience, and music are optional beta features. They require the SFX/music sidecar to be enabled in `.env`.
+SFX, ambience, and music are optional beta features. The launcher enables the SFX/music sidecar automatically when Docker can see an NVIDIA GPU. If Docker GPU support is not available, the launcher leaves it disabled unless you explicitly opt in.
+
+To turn SFX/music off, edit `.env` and set:
 
 ```text
-INDTEXTS_SFX_ENABLED=true
+INDTEXTS_SFX_ENABLED=false
 ```
 
 Then run `start.bat` again.
@@ -252,10 +260,13 @@ Timeline basics:
 - ambience, SFX, and music can overlap spoken lines
 - track controls help with volume, mute, solo, lock, and collapse
 - selected dialogue clips show text and emotion controls
+- selected dialogue clips can adjust `Pause before` and `Pause after` to shape conversation spacing
 - selected sound clips show prompt, duration, volume, and regenerate controls
 - preview the mix before downloading
 
 Long speaker names are shortened on track labels so the timeline stays readable.
+
+If you edit the script after placing clips, watch for the timeline sync banner. Use `Rebuild Timeline` when the app says the timeline is out of sync.
 
 ## Audiobook Canvas
 
@@ -308,7 +319,7 @@ Try shorter lines, cleaner speaker clips, lower emotion intensity, and the balan
 
 ### SFX or music fails
 
-SFX/music is optional and heavier than dialogue. Make sure `INDTEXTS_SFX_ENABLED=true`, Docker can use the GPU, and there is enough free VRAM.
+SFX/music is optional and heavier than dialogue. Make sure Docker can use the GPU, `INDTEXTS_SFX_ENABLED` has not been set to `false`, and there is enough free VRAM.
 
 ### I need to report a bug
 

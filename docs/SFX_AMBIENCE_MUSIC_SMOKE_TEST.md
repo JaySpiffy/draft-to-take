@@ -2,24 +2,31 @@
 
 Use this checklist when testing the optional sound-design sidecar.
 
-SFX, ambience, and music are experimental beta features. They are disabled by default because they use heavier model-backed generation and may need more VRAM.
+SFX, ambience, and music are experimental beta features. The launcher enables them automatically when Docker can see an NVIDIA GPU. If Docker GPU support is not available, the launcher leaves them disabled unless you explicitly opt in.
 
-## Enable Sound Design
+## Confirm Sound Design Is Enabled
 
-1. Open `.env`.
-2. Set:
+1. Run `start.bat`.
+2. Watch the terminal for the SFX/music sidecar startup.
+3. Confirm the SFX service is available in the UI.
+
+To force-enable sound design on a GPU machine, open `.env` and set:
 
 ```text
 INDTEXTS_SFX_ENABLED=true
 ```
 
-3. Run:
+Then run:
 
 ```text
 start.bat
 ```
 
-4. Wait for the app to start and confirm the SFX service is available in the UI.
+To disable sound design, set:
+
+```text
+INDTEXTS_SFX_ENABLED=false
+```
 
 If Docker cannot see your NVIDIA GPU, SFX/music generation may fail or run too slowly to be useful.
 
