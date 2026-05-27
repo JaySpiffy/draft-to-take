@@ -20,7 +20,7 @@ Formerly **IndexTTS Workflow Studio**. This repository is the public Docker beta
 Most TTS tools are great for one line at a time. Draft to Take is built for the whole production loop:
 
 ```text
-Write or import a script -> cast voices -> detect emotion -> generate takes -> lock the good ones -> add sound cues -> export the mix
+Write or import a script -> assign prepared voices -> detect emotion -> generate takes -> lock the good ones -> add sound cues -> export the mix
 ```
 
 Use it for audio drama, game dialogue, audiobook tests, YouTube narration, podcast sketches, horror scenes, or any project where you want a local script-to-audio workflow instead of a cloud text box.
@@ -41,15 +41,15 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 ## Try This First
 
-After starting the app, import the sample scene: [Blackmere Road](samples/try-this-first/blackmere-road-45s.md).
+After starting the app, either use the in-app `Try Demo Project` flow or import the sample scene: [Blackmere Road](samples/try-this-first/blackmere-road-45s.md).
 
 Suggested first run:
 
 1. Double-click `start.bat`.
 2. Open `http://localhost:3000`.
-3. Go to `Studio`.
-4. Start a new blank Script Canvas project.
-5. Click `Import MD` and select the sample file.
+3. Use `Try Demo Project` and click `Pick voices`, or open `Voices` to prepare a reusable speaker first.
+4. Assign each demo/script role to a prepared voice in the Voice Workbench.
+5. Open the demo script, or go to `Studio -> Script Canvas` and import the sample Markdown file.
 6. Click `Full Episode Timeline`.
 7. Click `Detect Active Scene Emotions`.
 8. Click `Generate Audio`.
@@ -64,7 +64,7 @@ The sample includes dialogue, IndexTTS2 emotion comments, ambience, music, and S
 - **Take review** - listen, lock strong takes, and regenerate only weak unlocked lines.
 - **Emotion-aware delivery** - Qwen can suggest IndexTTS2 emotion vectors, and you can adjust them manually.
 - **Timeline export** - dialogue, SFX, ambience, and music live in one embedded Script Canvas timeline.
-- **Reusable libraries** - keep voices, characters, SFX, ambience, and music assets organized for future projects.
+- **Reusable libraries** - keep prepared voices, source clips, SFX, ambience, and music assets organized for future projects.
 
 ## Quick Start
 
@@ -97,7 +97,7 @@ Review timing, generate missing takes, balance dialogue/SFX/ambience/music track
 
 ![Voice Studio](screenshots/03-voice-studio.png)
 
-Create synthetic voices, prepare source clips, manage reusable voice assets, then turn them into character profiles for Script Canvas.
+Create synthetic voices, prepare source clips, manage reusable voice assets, then assign them to readable Script Canvas role names in the Voice Workbench.
 
 ## Manuals
 
@@ -106,14 +106,15 @@ If you are testing the beta for the first time, start with the manuals:
 - [Docs index](docs/README.md)
 - [User Manual](docs/USER_MANUAL.md)
 - [Script Canvas Authoring Guide](docs/SCRIPT_CANVAS_AUTHORING_GUIDE.md)
+- [Script Canvas AI System Prompt](docs/SCRIPT_CANVAS_AI_SYSTEM_PROMPT.md)
 - [IndexTTS2 Prompting Guide](docs/INDEXTTS2_PROMPTING_GUIDE.md)
 - [SFX, Ambience, And Music Smoke Test](docs/SFX_AMBIENCE_MUSIC_SMOKE_TEST.md)
 
 ## Beta Status
 
-`v3.0.0-beta.9` is ready for a small closed beta with Docker-capable testers.
+`v3.0.0-beta.10` is ready for a small closed beta with Docker-capable testers.
 
-This update improves Script Canvas project saving, current-draft recovery, raw script editing, timeline sync warnings, and selected-clip pause controls.
+This update improves Script Canvas voice onboarding, the Voice Workbench, first-run starter voice guidance, voice preview feedback, dark-mode readability, timeline/source editor resizing, and beginner status messaging.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
@@ -255,7 +256,7 @@ Your shared folder under `%USERPROFILE%\DraftToTake\shared` is not deleted.
 If a new release uses a new Docker image tag, check `.env` and update:
 
 ```text
-DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.9
+DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.10
 ```
 
 ## Stopping

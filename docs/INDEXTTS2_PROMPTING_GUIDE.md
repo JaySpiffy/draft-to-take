@@ -1,93 +1,86 @@
 # IndexTTS2 Prompting Guide
 
-This guide explains how to write text that Draft to Take can send cleanly to IndexTTS2.
+This guide is the house standard for writing text that will be spoken by Draft to Take through IndexTTS2.
 
-## The Big Idea
+It combines the local app workflow with the official IndexTTS2 behavior documented by the IndexTTS team.
 
-Treat these as separate controls:
+## Verified Sources
 
-- speaker label chooses the local prepared voice
-- spoken text gives the words
-- emotion vectors steer delivery
-- timeline placement controls timing, gaps, overlap, and export
+- Official repo: <https://github.com/index-tts/index-tts>
+- Official model card: <https://huggingface.co/IndexTeam/IndexTTS-2>
+- Official demo code: <https://github.com/index-tts/index-tts/blob/main/webui.py>
+- Paper: <https://arxiv.org/abs/2506.21619>
 
-Do not try to force everything into the spoken text. The app has better controls for delivery and timing.
+## Model Reality
+
+IndexTTS2 separates speaker identity from emotion better than older zero-shot TTS models.
+
+For Draft to Take, treat these as separate jobs:
+
+- Speaker label chooses the local voice prompt.
+- Spoken text gives the line content and light prosody.
+- Emotion vectors, emotion text, or emotion reference audio steer delivery.
+- Timeline placement controls real timing, gaps, overlap, and playback arrangement.
+
+Do not ask the script LLM to solve everything inside the spoken text. The app has better controls for delivery and timing.
 
 ## Best Script Shape
 
-Use:
+Use this format:
 
 ```text
-Speaker Label: Clear spoken line.
-Other Speaker: Another clear spoken line.
+SpeakerLabel: Clear spoken line.
+OtherSpeaker: Another clear spoken line.
 ```
 
 Rules:
 
-- Use exact local speaker or character labels.
+- Use exact local speaker labels.
 - Use one speaker per line.
 - Use one utterance per line.
 - Aim for 6 to 18 words.
 - Avoid going past 22 words unless there is a good reason.
 - Split long thoughts where a real person would breathe, react, or be interrupted.
-- Use natural punctuation.
+- Use natural punctuation as a soft prosody hint.
 - Keep raw spoken text free of bracketed stage directions.
 
 ## What To Avoid
 
-Avoid:
+Avoid this:
 
 ```text
-Speaker One: (angrily slamming table) I told you this would happen!!!
-Speaker Two: [whispering nervously] I do not know what to do...
+SpeakerOne: (angrily slamming table) I told you this would happen!!!
+SpeakerTwo: [whispering nervously] I do not know what to do...
 ```
 
-Prefer:
+Prefer this:
 
 ```text
-Speaker One: I told you this would happen.
-Speaker One: Nobody listened.
-Speaker Two: Keep your voice down.
-Speaker Two: I do not know what to do.
+SpeakerOne: I told you this would happen.
+SpeakerOne: Nobody listened.
+SpeakerTwo: Keep your voice down.
+SpeakerTwo: I do not know what to do.
 ```
 
 Why:
 
-- parenthetical directions may be spoken literally
-- punctuation spam can sound forced
-- short lines give the model cleaner phrase boundaries
-- emotion should be controlled by wording and app-side emotion controls
+- Parenthetical directions may be spoken literally or destabilize delivery.
+- Punctuation spam can sound forced.
+- Short lines give the model cleaner phrase boundaries.
+- Emotion should be controlled by wording and app-side emotion controls.
 
-## Emotion Controls
+## Emotion Prompting
 
-Draft to Take uses the official IndexTTS2-style vector set:
+IndexTTS2 supports multiple emotion-control paths in the official demo/inference code:
 
-```text
-joy, anger, sadness, fear, disgust, low_mood, surprise, calm
-```
+- speaker/reference emotion
+- emotion reference audio
+- custom emotion vectors
+- emotion text
 
-Limits:
+Draft to Take should use those controls instead of stuffing direction tags into the script.
 
-- each emotion is capped at `0.5`
-- total vector sum is capped at `1.5`
-- subtle values usually sound better than max values
-
-Good emotion comments for import:
-
-```text
-Captain Quibble: Nobody panic. <!-- emotion: calm=0.28 fear=0.1 joy=0.04 -->
-Zini Spark: The rain laughed when I said my name. <!-- emotion: fear=0.3 surprise=0.12 sadness=0.08 -->
-```
-
-Avoid:
-
-```text
-Professor Plink: Welcome. <!-- emotion: joy=1.4 -->
-```
-
-## Emotion Text
-
-Some paths can use short emotion text prompts. Keep them simple and delivery-focused:
+Good `emotion_text` examples:
 
 - `quiet concern`
 - `dry disbelief`
@@ -95,78 +88,121 @@ Some paths can use short emotion text prompts. Keep them simple and delivery-foc
 - `warm narrator`
 - `tired sarcasm`
 
-Avoid plot summaries or timing instructions:
+Bad `emotion_text` examples:
 
 - `He is angry because the app crashed in scene two`
+- `Make this sound like the famous clip from that movie`
 - `Say it at exactly 3.2 seconds`
+
+Keep emotion text short. Describe delivery, not plot.
 
 ## Punctuation
 
-Punctuation helps, but it is not a timing system.
+Punctuation is useful, but it is not a full timing system.
 
-- comma: light pause or turn in thought
-- period: clean stop
-- question mark: questioning contour
-- exclamation mark: occasional emphasis
-- ellipsis: hesitation or trailing off, used sparingly
+- Comma: light pause or turn in thought.
+- Period: clean stop.
+- Question mark: questioning contour.
+- Exclamation mark: occasional emphasis.
+- Ellipsis: hesitation or trailing off, used sparingly.
 
-For exact timing, use the timeline.
+For exact timing, use the timeline, not punctuation tricks.
 
-## Text Cleanup
+## Spoken Text Normalization
 
-Draft to Take may normalize text before TTS to reduce unstable pronunciation.
+Draft to Take keeps the user's canvas text natural, but normalizes the text sent
+to IndexTTS2 before inference.
+
+The generation path now expands common contractions and removes markdown-like
+markup because community testing has shown apostrophes, smart quotes, and
+decorative emphasis can trigger unstable pronunciation or breakups.
 
 Examples:
 
-- `We're ready` can become `We are ready`.
-- `It'll work` can become `It will work`.
-- `*very serious*` can become `very serious`.
+- `We're ready` is sent as `We are ready`.
+- `It'll work` is sent as `It will work`.
+- `Manager's desk` is sent as `Managers desk`.
+- `*very serious*` is sent as `very serious`.
 
-This helps keep the canvas readable while giving IndexTTS2 cleaner input.
+## Generation Presets
 
-## Source Clip Quality
+Use `Balanced` as the default preset for Script Canvas work. In a small local
+A/B run on JoeRogan, kajsa, and Pr.D.Trump voice prompts, `Balanced` produced
+the best automated quality score for all three. Human listening still wins:
+the `Pr.D.Trump.wav` Clone Fidelity take `spk_1777013836.wav` was preferred by
+ear despite its lower automated quality score. Treat `Clone Fidelity` as a
+targeted voice-match tradeoff rather than a general quality upgrade.
 
-The prepared speaker prompt still matters a lot.
+Script Canvas can apply known voice-specific overrides while the global preset
+stays `Balanced`. Today, `Pr.D.Trump.wav` uses `Clone Fidelity` when lines are
+placed on the timeline because human listening feedback preferred that take.
 
-Best source clips:
+## Automatic Audio Judge
+
+Draft to Take now treats SpeechBrain as the voice-match judge, not the whole
+quality judge. The backend combines speaker similarity with deterministic audio
+health checks and the existing robotic-speech heuristic.
+
+The judge looks for:
+
+- weak speaker similarity
+- clipping or overloaded peaks
+- near-silent takes
+- long internal silence or dropout risk
+- abrupt clicks that may sound like breakup
+- overly long script lines
+- rushed or slow delivery based on rough words-per-minute
+
+Use this as triage, not as a replacement for listening. A `pass` verdict means
+the take looks healthy by automatic checks. A `review` verdict means listen
+before locking. A `regenerate` verdict means the take has a measurable problem
+such as clipping, silence, weak voice match, or high roboticity.
+
+CLI example inside the backend container:
+
+```bash
+python3 backend/scripts/audio_quality_judge.py \
+  --audio shared/audio/outputs/spk_1777013836.wav \
+  --reference shared/audio/speakers/Pr.D.Trump.wav \
+  --text "The line that should be spoken."
+```
+
+## Source Clip Prompting
+
+The speaker prompt audio still matters a lot.
+
+Best source clip:
 
 - 8 to 20 seconds
 - one clear speaker
-- dry audio
-- low room noise
+- dry audio, low room noise
+- natural pace
 - no background music
 - no heavy reverb
 - no overlapping voices
-- natural pacing
 
 If a voice sounds weak, robotic, or unstable, fix the speaker prompt before over-tuning the script.
 
-## Long Scripts
+## Long Episodes
 
 For sitcoms, podcasts, audiobooks, or long scenes:
 
 - plan chapters and scenes first
-- draft one scene or page at a time
-- carry continuity context forward
+- draft one scene at a time
+- carry continuity context into the next scene
 - keep lines short even when the episode is long
-- build timeline clips per scene or full episode
-- lock good takes before regenerating weak ones
+- build timeline clips per scene
+- lock good takes before regenerating weaker ones
 
-The writing model can preserve continuity, but the TTS text should stay line-level and speakable.
+The LLM should preserve continuity, but the TTS text should stay line-level and speakable.
 
-## Practical Quality Notes
+## LLM Harness Summary
 
-- Use `Balanced` as the first quality preset.
-- Listen before deciding a take is good.
-- Lock strong takes before retrying weak ones.
-- Avoid overdriven emotions.
-- Avoid very long lines.
-- Use clean source voices.
-- Use SFX, ambience, and music tracks for sound design instead of putting sound descriptions into dialogue.
+The Script Canvas assistant should always know:
 
-## Verified Sources
-
-- Official IndexTTS repo: <https://github.com/index-tts/index-tts>
-- Official IndexTTS2 model card: <https://huggingface.co/IndexTeam/IndexTTS-2>
-- Official demo code: <https://github.com/index-tts/index-tts/blob/main/webui.py>
-- Paper: <https://arxiv.org/abs/2506.21619>
+- The output is parsed before TTS.
+- Raw script text becomes spoken text.
+- Stage directions should not be in spoken text.
+- Emotion and timing have dedicated app controls.
+- IndexTTS2 benefits from short, natural, punctuation-aware lines.
+- Speaker labels are production voice labels, not necessarily character names.

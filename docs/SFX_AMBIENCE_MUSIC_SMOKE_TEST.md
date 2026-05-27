@@ -1,103 +1,59 @@
-# SFX, Ambience, And Music Smoke Test
+# SFX, Ambience, And Music Sidecar Smoke
 
-Use this checklist when testing the optional sound-design sidecar.
+Use this smoke test after changes to SFX Studio, Script Canvas sound cues, `/api/sfx/*`, or timeline SFX/ambience/music tracks.
 
-SFX, ambience, and music are experimental beta features. The launcher enables them automatically when Docker can see an NVIDIA GPU. If Docker GPU support is not available, the launcher leaves them disabled unless you explicitly opt in.
+## Purpose
 
-## Confirm Sound Design Is Enabled
+Verify that Script Canvas can place sound-design cues, call the optional real-model sidecar, and keep SFX/ambience/music separate from dialogue timing.
 
-1. Run `start.bat`.
-2. Watch the terminal for the SFX/music sidecar startup.
-3. Confirm the SFX service is available in the UI.
+## Preconditions
 
-To force-enable sound design on a GPU machine, open `.env` and set:
+- The normal Docker stack is healthy.
+- The optional SFX/ambience/music profile is running:
 
-```text
-INDTEXTS_SFX_ENABLED=true
+```powershell
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.gpu.yml --profile sfx up -d --build sfx backend frontend
 ```
 
-Then run:
+- `GET http://localhost:8001/api/sfx/status` reports the sidecar as reachable.
+- You have at least one local prepared voice for dialogue testing.
+
+## Steps
+
+1. Open `Studio -> Script Canvas`.
+2. Import or write a short scene with dialogue plus one SFX marker, one ambience marker, and one music marker.
+3. Example cue markers:
 
 ```text
-start.bat
+[[SFX: short wooden door creak, close microphone, dry room | duration=1.5]]
+[[AMBIENCE: steady rain on windows, loopable, no voices | scene]]
+[[MUSIC: low uneasy horror pulse, sparse, no vocals | duration=12]]
 ```
 
-To disable sound design, set:
+4. Click `Build Full Episode Timeline` or `Place Timeline`.
+5. Confirm dialogue, SFX, ambience, and music appear as separate timeline track types.
+6. Click `Detect Timeline Emotions` if dialogue vectors are missing.
+7. Click `Generate Audio`.
+8. Confirm dialogue renders first, then SFX/ambience/music generation runs as a batch.
+9. Play the generated SFX, ambience, and music assets from the canvas/timeline if controls are available.
+10. Preview the full mix and confirm SFX/ambience/music can overlap dialogue.
+11. Download the exported mix.
+12. Stop the sidecar when finished if you do not need more sound generation:
 
-```text
-INDTEXTS_SFX_ENABLED=false
+```powershell
+docker compose -f docker/docker-compose.yml -f docker/docker-compose.gpu.yml stop sfx
 ```
 
-If Docker cannot see your NVIDIA GPU, SFX/music generation may fail or run too slowly to be useful.
+## Expected Results
 
-## Smoke Script
+- The app does not invent procedural placeholder sounds.
+- If the sidecar cannot generate, the UI shows a clear error state and leaves the cue editable.
+- Generated SFX are saved under `shared/audio/sfx`.
+- Generated ambience beds are saved under `shared/audio/ambience`.
+- Generated music beds are saved under `shared/audio/music`.
+- Dialogue timeline sync is not broken by SFX/ambience/music overlaps.
+- The final downloaded mix includes dialogue and any successfully generated SFX/ambience/music assets.
 
-Paste this into Script Canvas or save it as Markdown and use `Import MD`:
+## Notes
 
-```text
-## Chapter 1: Smoke Test
-
-### Scene 1: Outside The Door
-Narrator: Rain worked at the old street like it had a private grudge. [[AMBIENCE: steady cold rain on pavement, distant traffic, no voices]] [[MUSIC: low uneasy pulse, sparse strings, no vocals | duration=16]] <!-- emotion: fear=0.18 low_mood=0.14 calm=0.08 -->
-Captain Quibble: Nobody touch the door until it agrees to behave. <!-- emotion: calm=0.28 fear=0.08 anger=0.04 -->
-Bolt Crumple: It just winked at me through the keyhole. [[SFX: tiny brass keyhole click, close and dry | duration=1.2]] <!-- emotion: fear=0.24 surprise=0.14 joy=0.04 -->
-Narrator: The latch lifted by itself, slow as a finger learning a trick. [[SFX: old iron latch lifting, wet hinge tremor | duration=2.2]] <!-- emotion: fear=0.3 surprise=0.12 low_mood=0.06 -->
-Captain Quibble: Excellent. Polite machinery is always the worst kind. <!-- emotion: calm=0.22 fear=0.12 anger=0.06 -->
-```
-
-## Test Steps
-
-1. Open `Studio`.
-2. Start a blank Script Canvas project.
-3. Paste or import the smoke script.
-4. Confirm the production view shows dialogue lines without the marker text being spoken.
-5. Click `Full Episode Timeline` or `Place Active Scene`.
-6. Confirm the timeline has separate dialogue, SFX, ambience, and music tracks.
-7. Click `Detect Active Scene Emotions`.
-8. Confirm dialogue lines receive emotion vectors.
-9. Click `Generate Audio`.
-10. Wait for dialogue generation first, then SFX, ambience, and music generation.
-11. Preview the timeline mix.
-12. Download the mix.
-
-## Expected Result
-
-- Dialogue clips have generated audio.
-- SFX clips are short and placed near the marker location.
-- Ambience sits on its own track and can cover the scene.
-- Music sits on its own track and can overlap dialogue.
-- Preview and downloaded mix include dialogue plus sound-design assets.
-
-## Useful Checks
-
-- Lock good dialogue takes before retrying weak ones.
-- Audition generated SFX and music; not every take will be good.
-- Delete bad SFX/music/ambience assets from their libraries when you are done.
-- If a generated ambience bed has silent gaps, regenerate it with a steadier prompt such as `continuous rain bed, no silence, no voices`.
-- If a cue fails, check whether files appeared in the library anyway. Some model calls can finish writing files after the HTTP request times out.
-
-## Common Problems
-
-### HTTP 422 From SFX Service
-
-This usually means the sidecar rejected the request. Try a shorter prompt, shorter duration, or fewer batch takes.
-
-### Backend Temporarily Unavailable
-
-The backend may be restarting or waiting on a sidecar. Wait a moment, then retry. If it keeps happening, run `collect-diagnostics.bat`.
-
-### Not Enough VRAM
-
-Dialogue, Qwen, OmniVoice, SFX, and music models all compete for VRAM. Draft to Take tries to unload idle managed models, but manually loaded or active models may still occupy memory.
-
-Stop other GPU workloads, run `stop.bat`, then start again.
-
-### Garbled SFX
-
-Use more concrete foley prompts and generate multiple takes. Examples:
-
-```text
-short dry wooden knock, close microphone, no music, no speech
-small metal latch click, single sound, close and dry, no voices
-steady cold rain bed, no speech, no music, seamless loop
-```
+Woosh and MusicGen output can vary. A passed smoke test means the integration path works, not that every generated take is artistically final.

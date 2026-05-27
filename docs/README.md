@@ -8,6 +8,7 @@ This repo does not contain the private Draft to Take source code or model weight
 
 - [User Manual](USER_MANUAL.md) - the main app walkthrough, from first launch to exported mix.
 - [Script Canvas Authoring Guide](SCRIPT_CANVAS_AUTHORING_GUIDE.md) - the exact script, emotion, SFX, ambience, and music marker format the canvas understands.
+- [Script Canvas AI System Prompt](SCRIPT_CANVAS_AI_SYSTEM_PROMPT.md) - a copy-paste prompt for external AIs to write valid Script Canvas scripts.
 - [IndexTTS2 Prompting Guide](INDEXTTS2_PROMPTING_GUIDE.md) - how to write clean lines for better TTS output.
 - [SFX, Ambience, And Music Smoke Test](SFX_AMBIENCE_MUSIC_SMOKE_TEST.md) - a tester checklist for GPU-enabled sound-design generation.
 

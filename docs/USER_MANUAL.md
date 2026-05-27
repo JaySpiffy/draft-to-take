@@ -1,332 +1,262 @@
-# Draft to Take Beta User Manual
+# Draft to Take User Manual
 
-Draft to Take is a local-first audio production studio for turning scripts into generated dialogue, reviewed takes, timeline clips, and exported mixes.
-
-The main beta workflow is:
+This manual describes the current Docker-first app. The main workflow is:
 
 ```text
-Voice Studio -> Characters -> Studio / Script Canvas -> Embedded Timeline -> Download Mix
+Studio -> Script Canvas -> Timeline -> Download Mix
 ```
 
-You can also skip the AI Thread and paste or import your own script directly.
+Older saved projects should now open into Script Canvas through compatibility loading. New work should start in Script Canvas. Voice assets and SFX/ambience/music assets each have their own focused pages so the Studio sidebar stays calmer.
 
 ## Quick Start
 
-1. Start Docker Desktop and wait until it is fully running.
-2. Double-click `start.bat` in this repo.
-3. Open the frontend URL printed in the terminal, usually `http://localhost:3000`.
-4. Open `Voice Studio` to create or prepare reusable voice assets.
-5. Open `Characters` to turn those voices into cast profiles.
-6. Open `Studio` and start a blank Script Canvas project.
-7. Write, paste, import, or ask the optional AI Thread to draft your script.
-8. Click `Save Project` when you want it to appear in Home and Recent Projects.
-9. Place the active scene or full episode on the embedded timeline.
-10. Detect emotions if you want Qwen to set IndexTTS2 delivery vectors.
-11. Generate audio, listen, lock good takes, retry weak takes, then download the final mix.
+1. Start the app with `docker\start.bat`.
+2. Open `http://localhost:3000`.
+3. Use `Try Demo Project` on Home if you want a ready-made short scene to inspect first.
+4. Add prepared speaker WAV files in `shared/audio/speakers`, create synthetic voices in `Voices`, or prepare a source clip into a reusable voice.
+5. Open `Studio -> Script Canvas` and choose the creative flow: Script, Audiobook, or Speech.
+6. Paste `Speaker: line` text directly into the canvas, open the demo, or import a Markdown script.
+7. Make sure each speaker label has a prepared voice assigned. Use the Script Canvas Voice Browser to click `Assign voice`, then click or drag a prepared voice onto that missing label.
+8. Follow the Script Canvas next-action strip: match voices, place the timeline, generate, judge, and export.
+9. Use chapters and scenes for longer scripts.
+10. Place the active scene or full episode on the timeline.
+11. Detect emotions if you want Qwen to set IndexTTS2 delivery vectors.
+12. Generate dialogue and any SFX/ambience/music cues.
+13. Judge takes, listen, lock the good lines, and retry weak unlocked lines.
+14. Download the final mix from the timeline controls.
 
-First launch can be slow because Docker images and model files are large. Keep the launcher terminal open while it pulls images, downloads models, and starts services.
+## Home And Projects
 
-## Home
-
-The Home page is a launch pad:
-
-- `Studio` opens the Script Canvas workflow.
-- `Voice Studio` opens reusable voice creation and source clip prep.
-- `Characters` opens cast profiles linked to voices.
-- `Continue Current Draft` returns to the latest local Script Canvas draft, even before you have formally saved it.
-- `Recent Projects` opens saved Script Canvas projects.
-- Delete buttons let you remove old recent projects when the list gets noisy.
-
-Saved projects live under:
-
-```text
-%USERPROFILE%\DraftToTake\shared\data\project_saves
-```
-
-## Voice Studio
-
-A voice is a reusable audio asset. It is not a character yet. One voice can be linked to many characters later.
-
-### Create Voice
-
-Use `Create Voice` to generate a reusable synthetic voice through the optional OmniVoice sidecar.
-
-The beta uses dropdowns for:
-
-- gender
-- age
-- pitch
-- style
-- English accent
-
-The app builds an English-only OmniVoice instruction from those choices. Generated WAV files are saved as prepared voices, then Script Canvas still renders final dialogue with IndexTTS2.
-
-### Voice Library
-
-The Voice Library lists prepared speaker WAV files. Badges show where a voice came from:
-
-- `AI Synth` for generated synthetic voices.
-- `Audio Clone` for prepared or uploaded source-audio voices.
-
-Use the library views to keep large collections manageable:
-
-- `Compact` for table-like review.
-- `Roomy` for more readable rows.
-- `Grid` for compact cards, up to several per row on wide screens.
-
-Selecting a voice opens the side inspector with full metadata and actions. Use `Play` to audition, `Create Character` to cast it, and `Delete` to remove unwanted voices.
-
-### Source Clips
-
-Source Clips are raw audio files waiting for cleanup, diagnosis, and promotion into the voice library.
-
-Good source clips are usually:
-
-- 8 to 20 seconds.
-- one clear speaker.
-- dry audio with low room noise.
-- no background music.
-- no overlapping voices.
-- natural pacing.
-
-Use Source Clip prep to trim, normalize, diagnose, and prepare a better speaker prompt before generating final dialogue.
-
-## Characters
-
-Characters are the LLM-facing cast profiles that Script Canvas uses.
-
-Each character has:
-
-- exact script label
-- linked reusable voice
-- role aliases
-- speaking style
-- rhythm
-- role notes
-- optional example lines
-- optional comedy function, emotional range, relationship notes, and scene role
-
-Keep character profiles focused on writing and performance. Engine defaults and safety limits belong in the app, not in every character.
-
-One prepared voice can be reused by multiple characters.
+- `New Blank Project` clears the active Script Canvas draft, chat thread, linked timeline state, and locally cached draft session.
+- `Try Demo Project` opens a bundled short scene with dialogue plus SFX, ambience, and music markers. It stays local until you press `Save Project`.
+- `Open Script Canvas` opens the current Studio canvas without changing saved projects.
+- `Recent Projects` shows saved sessions from `shared/data/project_saves`.
+- Script Canvas can derive a project title from AI-generated work and autosave it.
+- Autosaved projects preserve title, chat thread, chapter/scene structure, selected cast, generation preset, and timeline links.
+- If an old project appears after `New Blank Project`, hard refresh once before assuming backend data is wrong.
 
 ## Script Canvas
 
-Script Canvas is the main writing-to-audio workspace.
+Script Canvas is the main writing-to-audio surface.
 
 ### Creative Flow
 
-The beta supports three writing shapes:
+- `Script / Episode` is for chapter and scene based dialogue, sitcoms, plays, podcasts, and screen-style work.
+- `Audiobook` is for book chapters and page-sized narration sections, so long prose can be processed page by page instead of as scenes.
+- `Speech / Monologue` is for speeches, talks, presentations, and single-speaker pieces split into sections and spoken beats.
+- Saved projects remember the selected flow. The normal public workflow does not require the experimental AI Thread.
 
-- `Script / Episode` for scenes, sitcoms, podcasts, plays, and screen-style dialogue.
-- `Audiobook` for book chapters and page-sized narration sections.
-- `Speech / Monologue` for talks, presentations, and single-speaker work.
+### Advanced Experimental AI Thread
 
-Audiobook mode can import text or Markdown as page-sized sections so a whole book does not have to be sent through the model at once.
+- The visible AI Thread is a lab feature, experimental, and off by default.
+- Leave it off for the normal manual/demo/import Script Canvas workflow.
+- Enable it only from `Settings -> Script Analysis Provider -> Experimental writing assistant -> Enable experimental AI Thread in Script Canvas`.
+- When enabled, use the chat composer to ask for a plan, request a scene, continue a chapter, or rewrite selected text.
+- `Send` and `Stop` live inside the chat box.
+- The model selector uses your configured Script Analysis provider.
+- The refresh button reloads available local analysis models.
+- The assistant should use the visible local speaker labels.
+- The assistant should write short, speakable lines and split long thoughts at natural punctuation.
+- When the assistant asks a question, answer in the thread or use the quick-choice buttons.
+- Production actions stay on the canvas and timeline, not as permanent LLM action buttons.
 
-### AI Thread
+### Layout
 
-The AI Thread is optional and can be turned off in Settings. When enabled, it can help plan, draft, revise, and ask quick multiple-choice questions.
+- When the experimental AI Thread is enabled, it is separated from Script Canvas by a draggable vertical divider.
+- `Collapse AI` gives the canvas more room.
+- `Collapse Canvas` gives the AI Thread more room.
+- `Double View` returns to the side-by-side layout.
+- With the AI Thread off, Script Canvas opens as one clean production surface.
+- The left Studio tool rail currently exposes working sections only: `Edit`, `Chapters`, and `Voices`.
 
-The Qwen sidecar is also used for emotion detection, so turning off the AI Thread does not mean emotion detection has to be unavailable.
+### Chapters And Scenes
 
-Good AI Thread requests:
+- Use `Chapters` to create or rename chapters and scenes.
+- The active scene controls the script shown in the raw editor.
+- Scene metadata can include summary, narrator setup, target length, emotion strength, and linked timeline ID.
+- For longer episodes, continue scene by scene with a short story-so-far summary.
+- Keep narrator lines as normal `Narrator: text` lines when you want narration rendered by TTS.
+- Markdown import can create chapters/scenes, attach manual emotion vectors, and preserve SFX/ambience/music markers.
 
-```text
-Plan a 10 minute sci-fi comedy with Captain Quibble, Zini Spark, and Bolt Crumple.
-```
+### Canvas Review
 
-```text
-Rewrite the selected scene so it is tenser, but keep the same speaker labels.
-```
-
-```text
-Add two more short lines before the gate opens.
-```
-
-### Raw Script Format
-
-Script Canvas expects one production line per row:
-
-```text
-Speaker Label: spoken words go here
-```
-
-Use exact character labels. Keep lines short and speakable.
-
-Edits made in the Script Source/raw editor update the active scene immediately. If you already placed that scene on the timeline, the app may show a timeline sync warning until the timeline is rebuilt or updated.
-
-Bad:
-
-```text
-Beat 1: The heroes enter.
-Captain Quibble: (shouting angrily) Nobody panic while thunder explodes above us!!!
-```
-
-Good:
-
-```text
-Captain Quibble: Nobody panic.
-Captain Quibble: Houses cannot remember names.
-Bolt Crumple: Then why did the letterbox whisper mine?
-```
+- The canvas expects production lines in `Speaker: text` format.
+- The next-action strip shows the safest current step, from matching voices through export.
+- If speaker labels do not match prepared voices, Script Canvas offers `Assign Existing Voice` and `Rename Speaker Label` actions.
+- In the Voice Browser, click `Assign voice` beside a missing label, then click a library voice or drag a voice onto that label. This lets readable script roles use real prepared voice files without renaming the script.
+- `Place Timeline` turns the active scene into dialogue clips and placeholder sound cues.
+- `Build Full Episode Timeline` places every drafted chapter and scene into one timeline project.
+- `Detect Active Scene Emotions` applies Qwen-generated IndexTTS2 vectors to the active scene.
+- `Detect Timeline Emotions` applies vectors across the loaded Script Canvas timeline.
+- `Generate Audio` renders missing dialogue first, then batches SFX/ambience/music generation at the end.
+- `Judge Takes` scores existing placed audio without regenerating it.
+- The take filter row can show all lines, lines needing audio, flagged review takes, locked takes, or script lines not yet placed.
+- Each line gives a plain reason when something needs attention, such as missing voice, not placed, missing audio, judge not run, low similarity, too quiet, clipping, or silence gaps.
+- `Play` previews a generated line.
+- `Lock` protects a good take from batch regeneration.
+- `Regenerate` reruns one unlocked line.
+- `Retry Bad Takes` preserves locked and passing lines while rerunning unlocked missing/review/regenerate lines.
+- Quality badges are triage signals; human listening is still the final decision.
+- The raw editor remains available underneath the cleaner production-line view.
+- If script edits make the timeline stale, use `Update Matched Clips` for safe one-line text edits or `Rebuild Scene` when line count, speaker order, or clip identity changed.
+- If you manually set emotion sliders on a line, `Generate Audio` should not overwrite them unless that clip has no vectors.
 
 ### Markdown Import
 
-Use `Import MD` when you want to prepare a script outside the app.
+Use `Import MD` when you want to prepare a script outside the LLM or keep precise structure under source control.
 
-Markdown import can preserve:
+- Use headings for chapters and scenes.
+- Use normal `Speaker: line` entries for dialogue.
+- Optional emotion rows can set the official IndexTTS2 vector order: `joy`, `anger`, `sadness`, `fear`, `disgust`, `low_mood`, `surprise`, `calm`.
+- Each emotion is clamped to `0.5`, and the total vector sum is capped at `1.5`.
+- Place inline cues where sound should happen: `[[SFX: short metal latch click | duration=1.2]]`, `[[AMBIENCE: steady rain outside, no voices | scene]]`, or `[[MUSIC: low dread pulse | duration=12]]`.
+- Imported SFX, ambience, and music cues become separate timeline tracks so they can overlap dialogue.
+- Ambience is for scene-wide environment beds. It usually does not need a duration because the timeline stretches it to the current scene and loops a shorter generated bed during export.
+- Prefer `AMBIENCE` in scripts for background beds. `AMBIANCE`, `BACKGROUND`, and `BG` are accepted aliases, but the UI labels the track as Ambience.
 
-- chapters
-- scenes
-- dialogue lines
-- emotion vectors
-- SFX markers
-- ambience markers
-- music markers
+### Timeline Drawer And Export
 
-Example:
+- The bottom timeline drawer shows generated clips in sequence.
+- The drawer can expand/collapse and has a resize handle.
+- Use playback to check timing before export.
+- Clicking a Script Canvas-sourced timeline clip jumps back to the matching chapter, scene, and line when source metadata exists.
+- Dialogue, SFX, ambience, and music can occupy separate tracks and overlap in time.
+- Regenerated dialogue can push later timeline clips forward if the new take is longer than the old estimate.
+- Export/download creates the final mix.
+- If a generated episode is shorter than requested, continue with the next scene rather than forcing one giant generation.
 
-```text
-## Chapter 1: The Door That Remembers
+## Voices
 
-### Scene 1: Arrival In The Rain
-Professor Plink: Rain climbed Harrow House in silver threads. [[AMBIENCE: steady cold rain outside, distant road water, no voices]] <!-- emotion: fear=0.28 low_mood=0.14 calm=0.04 -->
-Bolt Crumple: Then why did the letterbox whisper my punishment nickname? <!-- emotion: fear=0.3 surprise=0.12 anger=0.04 -->
-```
+Voices is the home for reusable audio assets. A voice is the prepared WAV and label that Script Canvas uses for matching `Speaker: line` text.
 
-### Canvas Actions
+- `Create Voice` can make a reusable synthetic voice through the optional OmniVoice sidecar.
+- `Voice Library` lists prepared speaker prompts from `shared/audio/speakers`.
+- `Source Clips` lists raw clips from `shared/audio/source_clips`.
+- Source clip prep can trim, normalize, diagnose, and promote a raw clip into the reusable voice library.
+- Voice rows identify whether the asset came from AI synthesis or audio cloning/source prep so large libraries stay easier to scan.
+- Voice, source-clip, SFX, ambience, and music libraries support `Compact`, `Roomy`, and `Grid` views. Grid view shows compact cards, up to five per row on wide screens, while the side inspector keeps full metadata readable.
+- Select a voice or source clip to see its full details and actions in the inspector. Use library delete actions when you need to remove old prepared voices or source clips from disk.
+- If the optional OmniVoice sidecar is running, synthetic voice creation can generate a prepared WAV. Pick an adult/teen preset or tune gender, age, pitch, style, and English accent from dropdowns; the app builds an English-only OmniVoice prompt internally and auto-names the reusable voice asset. The age selector stays limited to teen/adult ranges. The generated WAV is still used by IndexTTS2 in Script Canvas.
+- Advanced baseline generation is available from the backend container: `python3 backend/scripts/generate_synthetic_voice_baseline.py --dry-run` shows the full matrix, and running without `--dry-run` creates the voices. The full UI-safe matrix is 480 voice recipes; `--takes-per-combo 3` creates 1,440 variant voice files. Use `--limit`, `--offset`, and the default `--skip-existing` resume behavior when building it over multiple sessions.
+- The app does not include bundled voice clones or private speaker packs.
 
-- `Save Project` stores the current Script Canvas project so it appears on Home and in Recent Projects.
-- `Place Active Scene` puts the current scene on the timeline.
-- `Full Episode Timeline` places every drafted chapter and scene.
-- `Detect Active Scene Emotions` detects vectors only for the active scene.
-- `Detect Timeline Emotions` detects vectors across the loaded timeline.
-- `Rebuild Timeline` appears when script edits mean the timeline is out of sync.
-- `Generate Audio` renders missing dialogue first, then batches sound cues.
-- `Judge Takes` checks generated takes without replacing them.
-- `Retry Bad Takes` keeps locked good takes and regenerates weak unlocked ones.
-- `Copy Script` copies the current script.
+## Legacy Character Profiles
 
-## Emotion Controls
+Older builds included a separate Characters workspace for cast profiles. The normal public workflow no longer asks users to create characters.
 
-Draft to Take uses Qwen to suggest IndexTTS2 emotion vectors.
+- Use prepared voice labels directly in Script Canvas.
+- Keep `Speaker: line` labels simple and make them match the voice labels you want.
+- Existing saved projects that contain character profile data should still load through compatibility paths.
+- Use the experimental AI Thread only when deliberately testing advanced writing/profile behavior.
 
-Official vector order:
+## Speaker Prep
 
-```text
-joy, anger, sadness, fear, disgust, low_mood, surprise, calm
-```
+Speaker Prep now lives under the Voices flow. Use it when a voice sounds weak, noisy, robotic, unstable, or less faithful than expected.
 
-Limits:
+### Source Clip Intake
 
-- each emotion is capped at `0.5`
-- total vector sum is capped at `1.5`
-- most lines sound better with subtle values
+- `Audio File` uploads a local source clip.
+- `Optional Save Name` gives the uploaded clip a cleaner filename.
+- `Upload Source Clip` imports the clip into the source library.
+- `Refresh Clips` reloads source clips from disk.
+- Good prompt clips are usually `8 to 20 seconds`, one clear speaker, low noise, and natural pacing.
 
-Manual sliders let you adjust a selected line. If a line already has manual emotion vectors, audio generation should not overwrite them unless you explicitly detect emotions again.
+### Diagnostics
 
-## SFX, Ambience, And Music
+- `Diagnose` runs clone-readiness checks on a clip.
+- The score badge gives a quick readiness summary.
+- Recommendations explain what to fix before cloning.
+- `Apply Recommended Prep` copies recommended cleanup settings into the prep controls.
+- `Use Suggested Trim` applies the diagnostic trim window.
 
-SFX, ambience, and music are optional beta features. The launcher enables the SFX/music sidecar automatically when Docker can see an NVIDIA GPU. If Docker GPU support is not available, the launcher leaves it disabled unless you explicitly opt in.
+### Prepare Clip
 
-To turn SFX/music off, edit `.env` and set:
+- `Trim Start` and `Trim End` isolate the strongest speaking section.
+- `Output Name` controls the saved filename.
+- Save prepared output to either `shared/audio/speakers` or `shared/audio/source_clips`.
+- `Convert to mono` is the safest speaker-prompt default.
+- `Normalize loudness` helps weak clips.
+- `Noise cleanup` can help noisy clips, but too much cleanup can make clones less natural.
+- `Vocal isolation` is a rescue tool for messy clips, not a default.
+- `Prepare And Create Speaker` saves the processed result as a live speaker prompt.
 
-```text
-INDTEXTS_SFX_ENABLED=false
-```
+## SFX Studio
 
-Then run `start.bat` again.
+SFX Studio is optional and requires the `sfx` Docker Compose profile.
 
-Script Canvas markers:
-
-```text
-[[SFX: iron gate latch lifting by itself, wet hinge tremor | duration=2.2]]
-[[AMBIENCE: steady cold rain outside, distant road water, no voices]]
-[[MUSIC: low string dread bed, slow pressure pulse, no vocals | duration=24]]
-```
-
-These become separate timeline tracks, so they can overlap dialogue. Ambience is best for scene-wide beds such as rain, park noise, harbor air, room tone, traffic, or spaceship hum.
-
-Generated SFX and music still need auditioning. Lock good takes and delete bad ones from the library when you are done.
+- SFX generation uses Woosh-DFlow by default. Use `SFX_WOOSH_MODEL_NAME=Woosh-Flow` for the slower higher-quality Woosh option.
+- Music generation uses MusicGen: `facebook/musicgen-small`.
+- These model-backed generators are license-dependent and should be treated as experimental unless you have checked the active model terms for your intended use. Draft to Take Pro should not be treated as granting extra rights to third-party models or their outputs.
+- Generate multiple takes, audition them, lock the best take, and place the asset on a timeline.
+- Script Canvas can batch-generate SFX, ambience, and music markers after dialogue generation.
+- SFX, ambience, and music are timeline assets, not dialogue clips, so they can overlap spoken lines.
+- The sidecar unloads models after generation by default to reduce VRAM pressure.
+- SFX/ambience/music generation is CUDA-first. If Docker did not pass the GPU through, the app should show a clear sidecar error instead of quietly making slow CPU renders.
+- SFX, ambience, and music libraries have compact, roomy, and grid views so large libraries do not become one giant wall of full-width cards.
+- Select a sound asset to open the inspector with prompt, filename, duration, size, engine, status, and actions.
+- Use `Delete` from a sound library row/card or the inspector to remove a generated SFX, ambience, or music asset and its metadata.
+- Large imported scripts can batch up to 200 sound cues; if you have more than that, split the episode into smaller sound-design passes.
+- Woosh is aimed at sound effects, but generated takes still need auditioning. Concrete foley language such as `short dry latch click, close microphone, no music, no speech` still works best.
+- Use ambience prompts for location beds such as `steady park birds and soft distant traffic, no voices` or `old house room tone with rain at windows`.
 
 ## Embedded Timeline
 
-The old standalone timeline page is not the main workflow anymore. Timeline editing now happens inside Script Canvas.
+The old standalone Timeline Editor page has been retired. Timeline work now happens inside Script Canvas so writing, cue placement, audio generation, preview, export, and download stay in one flow.
 
-Timeline basics:
+- Place the active scene or the full episode from Script Canvas.
+- Add dialogue, SFX, ambience, and music tracks.
+- Move clips in time and shape overlaps.
+- Generate missing or selected dialogue audio.
+- Batch optional SFX, ambience, and music cues after dialogue.
+- Preview and export the final arranged scene.
+- Download the rendered mix from the embedded timeline controls.
 
-- dialogue, SFX, ambience, and music can live on separate tracks
-- ambience, SFX, and music can overlap spoken lines
-- track controls help with volume, mute, solo, lock, and collapse
-- selected dialogue clips show text and emotion controls
-- selected dialogue clips can adjust `Pause before` and `Pause after` to shape conversation spacing
-- selected sound clips show prompt, duration, volume, and regenerate controls
-- preview the mix before downloading
+## Older Saved Projects
 
-Long speaker names are shortened on track labels so the timeline stays readable.
+Older project-save files are still worth keeping. When opened from `Recent Projects`, they should restore their title and script into Script Canvas rather than requiring the removed Conversation Workflow or Conversation Results screens.
 
-If you edit the script after placing clips, watch for the timeline sync banner. Use `Rebuild Timeline` when the app says the timeline is out of sync.
+If an old project does not restore as expected:
 
-## Audiobook Canvas
+- hard refresh once to clear a stale frontend bundle
+- confirm the save still exists in `shared/data/project_saves`
+- open the project from `Recent Projects` again
+- rebuild the current Script Canvas timeline with `Place Timeline` if old source metadata is missing
 
-Audiobook mode is for long prose.
+## Runtime Folders
 
-The intended flow is:
+- `shared/audio/speakers` - live speaker prompts.
+- `shared/audio/speakers_backups` - backups of replaced speakers.
+- `shared/audio/source_clips` - raw prep clips.
+- `shared/audio/sfx` - generated/imported SFX assets.
+- `shared/audio/ambience` - generated/imported ambience beds.
+- `shared/audio/music` - generated/imported music assets.
+- `shared/audio/outputs` - final exports.
+- `shared/audio/temp_conversation_segments` - per-line temporary generation audio. The folder name is historical.
+- `shared/data/project_saves` - saved projects.
+- `shared/data/timeline_projects` - saved timelines.
+- `shared/models/checkpoints` - IndexTTS2 model files.
 
-1. Upload or paste a text or Markdown book/chapter.
-2. Let the app split it into book chapters and page-sized sections.
-3. Process one section at a time.
-4. Keep a running memory of characters, tone, pronunciation, and plot state.
-5. Review or regenerate individual pages without rebuilding the whole book.
+## Quality Notes
 
-Use `Preserve text` when you want the audiobook to stay faithful to the source. Use `Adapt text` only when you want Qwen to rewrite prose into a more performable script.
+- Use clean, dry source clips before blaming the model.
+- Keep random sampling off when voice identity matters.
+- Use natural punctuation and sentence casing.
+- Split long lines at natural breath points.
+- Qwen emotion vectors are useful, but overdriving them can hurt stability. Manual sliders cap each emotion at `0.5`, and the IndexTTS2 vector total cannot exceed `1.5`.
+- SFX/ambience/music generation is model-backed and less predictable than dialogue generation. Use audition/lock like you do for voice takes.
+- The automatic judge is a practical safety net, not a replacement for listening.
+- Lock good takes before retrying bad ones.
 
-## Where Files Go
+## Local Network Use
 
-Your persistent local data is stored here:
-
-```text
-%USERPROFILE%\DraftToTake\shared
-```
-
-Important folders:
-
-- `shared\models` - downloaded model files.
-- `shared\models\checkpoints` - IndexTTS2 checkpoints and model cache.
-- `shared\models\llm` - Qwen GGUF files.
-- `shared\audio\speakers` - prepared speaker WAV files.
-- `shared\audio\source_clips` - raw source clips.
-- `shared\audio\sfx` - generated or imported SFX assets.
-- `shared\audio\ambience` - generated or imported ambience beds.
-- `shared\audio\music` - generated or imported music assets.
-- `shared\audio\outputs` - exported mixes.
-- `shared\data` - saved projects, timelines, and app data.
-
-## Troubleshooting
-
-### The app looks stuck on first start
-
-Large Docker images and models may still be downloading. Keep the terminal open and watch for progress or errors.
-
-### GPU is not detected
-
-Check Docker Desktop WSL2 integration and NVIDIA GPU support. CPU fallback may work, but it is much slower.
-
-### Audio sounds robotic or breaks up
-
-Try shorter lines, cleaner speaker clips, lower emotion intensity, and the balanced quality preset. Lock good takes before retrying weak ones.
-
-### SFX or music fails
-
-SFX/music is optional and heavier than dialogue. Make sure Docker can use the GPU, `INDTEXTS_SFX_ENABLED` has not been set to `false`, and there is enough free VRAM.
-
-### I need to report a bug
-
-Run:
+From another PC on the same private network, open:
 
 ```text
-collect-diagnostics.bat
+http://<this-computer-lan-ip>:3000
 ```
 
-Review the output before sharing it publicly. Do not post private scripts, speaker samples, generated audio, tokens, or personal data unless you are comfortable doing so.
+If Windows blocks the connection, allow port `3000` on the private network profile.
+
+## If The UI Changes
+
+Update this manual first, then add fresh screenshots or videos only when they show the current Script Canvas-first product. Avoid reintroducing old workflow media as primary documentation.
