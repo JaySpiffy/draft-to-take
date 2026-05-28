@@ -126,6 +126,7 @@ If you are testing the beta for the first time, start with the manuals:
 
 - [Docs index](docs/README.md)
 - [User Manual](docs/USER_MANUAL.md)
+- [Tutorial Series](docs/tutorials/README.md)
 - [Script Canvas Authoring Guide](docs/SCRIPT_CANVAS_AUTHORING_GUIDE.md)
 - [Script Canvas AI System Prompt](docs/SCRIPT_CANVAS_AI_SYSTEM_PROMPT.md)
 - [IndexTTS2 Prompting Guide](docs/INDEXTTS2_PROMPTING_GUIDE.md)
