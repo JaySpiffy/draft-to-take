@@ -13,7 +13,7 @@ Turn your scripts into finished multi-speaker audio, complete with emotion, soun
 
 ![Draft to Take app preview](media/draft-to-take-20s-app-clip.gif)
 
-Formerly **IndexTTS Workflow Studio**. This repository is the public Docker beta launcher for Draft to Take, the next-generation version of the original prototype.
+Formerly **IndexTTS Workflow Studio**. This repository is the public beta home for Draft to Take, the next-generation version of the original prototype. Most Windows testers should start with the installer preview attached to the latest release; the Docker launcher remains available as the fallback path.
 
 ## The Workflow
 
@@ -25,7 +25,7 @@ Write or import a script -> assign prepared voices -> detect emotion -> generate
 
 Use it for audio drama, game dialogue, audiobook tests, YouTube narration, podcast sketches, horror scenes, or any project where you want a local script-to-audio workflow instead of a cloud text box.
 
-This beta repo contains the Docker launcher, configuration, diagnostics scripts, and tester docs. It does not contain the private source code or model weights. Docker pulls prebuilt beta images from GitHub Container Registry, then the app downloads supported model files into your own local machine.
+This beta repo contains the Windows installer preview, Docker launcher, configuration, diagnostics scripts, and tester docs. It does not contain the private source code or model weights. The installer and Docker launcher both download supported model files into your own local machine.
 
 Looking for the old prototype? The previous IndexTTS Workflow Studio code is preserved on the [`legacy-v2`](https://github.com/JaySpiffy/draft-to-take/tree/legacy-v2) branch and the [`v2-legacy-final`](https://github.com/JaySpiffy/draft-to-take/tree/v2-legacy-final) tag.
 
@@ -39,21 +39,53 @@ Short generated examples:
 
 What you are hearing: audio generated through the Draft to Take workflow using local model-backed dialogue/emotion tooling. Output quality depends on your source voices, settings, model downloads, and hardware.
 
+## Download And Start
+
+### Option A: Windows Installer Preview
+
+This is the simplest path for most Windows testers.
+
+1. Open the latest prerelease: [Draft to Take v3.0.0 beta 10](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.10).
+2. Download `DraftToTake-Native-Setup-v3.0.0-beta.10.exe`.
+3. Run the installer and choose `Full Studio (recommended)`.
+4. Start `Draft to Take` from the Start Menu.
+
+The installer is unsigned during beta, so Windows may show a SmartScreen warning. It does not bundle model weights; the app downloads models into your local `%USERPROFILE%\DraftToTake\shared` folder.
+
+Checksum:
+
+```text
+06AD65A37CEFC2A6F69C815D9EB32688FE8E3EC2B7FCCA4072C01A04F48A2F20
+```
+
+### Option B: Docker Launcher
+
+Use this if you already prefer Docker Desktop, need the known-good container fallback, or want to inspect the launcher files.
+
+1. Download this repo as a ZIP.
+2. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
+3. Double-click `start.bat`.
+4. Open the URL printed in the terminal, usually:
+
+```text
+http://localhost:3000
+```
+
+First launch can be slow because images and model files are large. Keep the terminal open and let it finish.
+
 ## Try This First
 
 After starting the app, either use the in-app `Try Demo Project` flow or import the sample scene: [Blackmere Road](samples/try-this-first/blackmere-road-45s.md).
 
-Suggested first run:
+Suggested first run inside the app:
 
-1. Double-click `start.bat`.
-2. Open `http://localhost:3000`.
-3. Use `Try Demo Project` and click `Pick voices`, or open `Voices` to prepare a reusable speaker first.
-4. Assign each demo/script role to a prepared voice in the Voice Workbench.
-5. Open the demo script, or go to `Studio -> Script Canvas` and import the sample Markdown file.
-6. Click `Full Episode Timeline`.
-7. Click `Detect Active Scene Emotions`.
-8. Click `Generate Audio`.
-9. Preview and download the mix.
+1. Use `Try Demo Project` and click `Pick voices`, or open `Voices` to prepare a reusable speaker first.
+2. Assign each demo/script role to a prepared voice in the Voice Workbench.
+3. Open the demo script, or go to `Studio -> Script Canvas` and import the sample Markdown file.
+4. Click `Full Episode Timeline`.
+5. Click `Detect Active Scene Emotions`.
+6. Click `Generate Audio`.
+7. Preview and download the mix.
 
 The sample includes dialogue, IndexTTS2 emotion comments, ambience, music, and SFX markers so you can test the full canvas without inventing a script first.
 
@@ -65,19 +97,6 @@ The sample includes dialogue, IndexTTS2 emotion comments, ambience, music, and S
 - **Emotion-aware delivery** - Qwen can suggest IndexTTS2 emotion vectors, and you can adjust them manually.
 - **Timeline export** - dialogue, SFX, ambience, and music live in one embedded Script Canvas timeline.
 - **Reusable libraries** - keep prepared voices, source clips, SFX, ambience, and music assets organized for future projects.
-
-## Quick Start
-
-1. Download this repo as a ZIP.
-2. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
-3. Double-click `start.bat`.
-4. Open the URL printed in the terminal, usually:
-
-```text
-http://localhost:3000
-```
-
-First launch can be slow because Docker images and model files are large. Keep the terminal open and let it finish.
 
 ## Product Tour
 
@@ -112,9 +131,9 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.10` is ready for a small closed beta with Docker-capable testers.
+`v3.0.0-beta.10` is ready for a small Windows beta, with the installer preview as the main onboarding path and Docker still available as the fallback.
 
-This update improves Script Canvas voice onboarding, the Voice Workbench, first-run starter voice guidance, voice preview feedback, dark-mode readability, timeline/source editor resizing, and beginner status messaging.
+This update improves Script Canvas voice onboarding, the Voice Workbench, first-run starter voice guidance, voice preview feedback, dark-mode readability, timeline/source editor resizing, beginner status messaging, and adds the first public Windows installer preview.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
@@ -126,11 +145,11 @@ All beta container images are public and pullable from GitHub Container Registry
 
 ## Who This Beta Is For
 
-This first beta is best for people who are comfortable with Docker Desktop and local AI tools. It is not a signed one-click desktop installer yet.
+This beta is best for people comfortable testing local AI tools on Windows. The installer path is now the easiest onboarding route, but it is still unsigned and marked as a preview.
 
 Good testers:
 
-- Run Windows 11 with Docker Desktop and WSL2.
+- Run Windows 11.
 - Have an NVIDIA GPU, ideally with 12-16 GB VRAM.
 - Can tolerate large downloads and rough edges.
 - Are willing to report bugs with hardware details and safe log excerpts.
@@ -138,9 +157,8 @@ Good testers:
 ## Requirements
 
 - Windows 11 recommended.
-- Docker Desktop with WSL2 enabled.
 - NVIDIA GPU strongly recommended.
-- NVIDIA Container Toolkit / Docker GPU support.
+- Docker Desktop with WSL2 and NVIDIA Container Toolkit only if using the Docker launcher path.
 - 32 GB system RAM recommended for the full workflow.
 - 12-16 GB VRAM recommended for the smoother local AI path.
 - Plenty of disk space. First-run image pulls and model downloads can be many gigabytes.
@@ -236,7 +254,9 @@ Only use SFX/music if your machine has enough VRAM and you understand that gener
 
 ## Updating The Beta
 
-To update to a newer beta:
+Installer users can update by downloading the newer setup `.exe` from the latest prerelease and running it. Your shared folder under `%USERPROFILE%\DraftToTake\shared` is preserved.
+
+Docker launcher users can update to a newer beta:
 
 1. Run:
 
