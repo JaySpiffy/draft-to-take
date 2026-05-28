@@ -1,6 +1,6 @@
 # Draft to Take User Manual
 
-This manual describes the current Docker-first app. The main workflow is:
+This manual describes the current Draft to Take beta, whether you start from the Windows installer preview or the Docker launcher fallback. The main workflow is:
 
 ```text
 Studio -> Script Canvas -> Timeline -> Download Mix
@@ -10,8 +10,8 @@ Older saved projects should now open into Script Canvas through compatibility lo
 
 ## Quick Start
 
-1. Start the app with `docker\start.bat`.
-2. Open `http://localhost:3000`.
+1. Install Draft to Take from the latest GitHub prerelease, or start the Docker fallback with `start.bat`.
+2. Open the app from the Start Menu or at `http://localhost:3000`.
 3. Use `Try Demo Project` on Home if you want a ready-made short scene to inspect first.
 4. Add prepared speaker WAV files in `shared/audio/speakers`, create synthetic voices in `Voices`, or prepare a source clip into a reusable voice.
 5. Open `Studio -> Script Canvas` and choose the creative flow: Script, Audiobook, or Speech.
@@ -182,7 +182,7 @@ Speaker Prep now lives under the Voices flow. Use it when a voice sounds weak, n
 
 ## SFX Studio
 
-SFX Studio is optional and requires the `sfx` Docker Compose profile.
+SFX Studio is optional and heavier than the core dialogue path. The Docker launcher uses the `sfx` Compose profile; the Windows installer Full Studio path can download the related model packs, but native sound-design support is still preview-level.
 
 - SFX generation uses Woosh-DFlow by default. Use `SFX_WOOSH_MODEL_NAME=Woosh-Flow` for the slower higher-quality Woosh option.
 - Music generation uses MusicGen: `facebook/musicgen-small`.
@@ -191,7 +191,7 @@ SFX Studio is optional and requires the `sfx` Docker Compose profile.
 - Script Canvas can batch-generate SFX, ambience, and music markers after dialogue generation.
 - SFX, ambience, and music are timeline assets, not dialogue clips, so they can overlap spoken lines.
 - The sidecar unloads models after generation by default to reduce VRAM pressure.
-- SFX/ambience/music generation is CUDA-first. If Docker did not pass the GPU through, the app should show a clear sidecar error instead of quietly making slow CPU renders.
+- SFX/ambience/music generation is CUDA-first. If GPU support is unavailable, the app should show a clear sidecar error instead of quietly making slow CPU renders.
 - SFX, ambience, and music libraries have compact, roomy, and grid views so large libraries do not become one giant wall of full-width cards.
 - Select a sound asset to open the inspector with prompt, filename, duration, size, engine, status, and actions.
 - Use `Delete` from a sound library row/card or the inspector to remove a generated SFX, ambience, or music asset and its metadata.

@@ -7,7 +7,7 @@
 
 Turn your scripts into finished multi-speaker audio, complete with emotion, sound design, and timeline mixing, all running locally on your machine.
 
-**Think ElevenLabs-style script production, but Docker-local, IndexTTS2-powered, and built for creators who want control over voices, takes, emotion, SFX, ambience, music, and export.**
+**Think ElevenLabs-style script production, but Windows-local, IndexTTS2-powered, and built for creators who want control over voices, takes, emotion, SFX, ambience, music, and export.**
 
 [Watch the 23-second app preview](media/draft-to-take-20s-app-clip.mp4)
 
@@ -25,7 +25,7 @@ Write or import a script -> assign prepared voices -> detect emotion -> generate
 
 Use it for audio drama, game dialogue, audiobook tests, YouTube narration, podcast sketches, horror scenes, or any project where you want a local script-to-audio workflow instead of a cloud text box.
 
-This beta repo contains the Windows installer preview, Docker launcher, configuration, diagnostics scripts, and tester docs. It does not contain the private source code or model weights. The installer and Docker launcher both download supported model files into your own local machine.
+This beta repo contains the Windows installer preview, Docker launcher fallback, configuration, diagnostics scripts, and tester docs. It does not contain the private source code or model weights. The installer and Docker launcher both download supported model files into your own local machine.
 
 Looking for the old prototype? The previous IndexTTS Workflow Studio code is preserved on the [`legacy-v2`](https://github.com/JaySpiffy/draft-to-take/tree/legacy-v2) branch and the [`v2-legacy-final`](https://github.com/JaySpiffy/draft-to-take/tree/v2-legacy-final) tag.
 
@@ -46,11 +46,13 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 This is the simplest path for most Windows testers.
 
 1. Open the latest prerelease: [Draft to Take v3.0.0 beta 10](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.10).
-2. Download `DraftToTake-Native-Setup-v3.0.0-beta.10.exe`.
+2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.10.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.10/DraftToTake-Native-Setup-v3.0.0-beta.10.exe).
 3. Run the installer and choose `Full Studio (recommended)`.
 4. Start `Draft to Take` from the Start Menu.
 
 The installer is unsigned during beta, so Windows may show a SmartScreen warning. It does not bundle model weights; the app downloads models into your local `%USERPROFILE%\DraftToTake\shared` folder.
+
+The installer preview is the normal-user onboarding path now. It is still beta software: the core Script Canvas dialogue workflow is the priority, while heavier Full Studio model packs and sidecars may still have rough edges.
 
 Checksum:
 
@@ -158,14 +160,25 @@ Good testers:
 
 - Windows 11 recommended.
 - NVIDIA GPU strongly recommended.
-- Docker Desktop with WSL2 and NVIDIA Container Toolkit only if using the Docker launcher path.
 - 32 GB system RAM recommended for the full workflow.
 - 12-16 GB VRAM recommended for the smoother local AI path.
-- Plenty of disk space. First-run image pulls and model downloads can be many gigabytes.
+- Plenty of disk space. First-run model downloads can be many gigabytes.
+- Docker Desktop with WSL2 and NVIDIA Container Toolkit only if using the Docker launcher path.
 
 CPU fallback can work for some paths, but it will be much slower.
 
-## What Start.bat Does
+## What The Windows Installer Does
+
+The installer:
+
+- Installs Draft to Take under your Windows user account.
+- Creates Start Menu shortcuts for launch, model setup, diagnostics, stop, and data folder access.
+- Uses the native Windows runtime path, so Docker Desktop is not required for the installer preview.
+- Offers `Full Studio (recommended)`, `Core dialogue only`, and `Custom` setup choices.
+- Downloads model packs after install or on first launch instead of bundling model weights in the setup file.
+- Preserves `%USERPROFILE%\DraftToTake\shared` during updates and uninstall.
+
+## What The Docker Launcher Does
 
 The launcher:
 
@@ -204,9 +217,9 @@ Important folders:
 
 ## Model Downloads
 
-This beta does not bundle model weights. The launcher and containers download the configured models into your local shared folder or Hugging Face cache.
+This beta does not bundle model weights. The Windows installer, Docker launcher, and containers download configured models into your local shared folder or Hugging Face cache.
 
-The default install uses IndexTTS2 for dialogue, managed Qwen for emotion detection and optional script assistance, OmniVoice for reusable voice design, and SFX/music generation when Docker GPU support is available. SFX, ambience, and music can still be disabled because those model-backed paths are heavier and license-dependent.
+The default Windows installer path uses IndexTTS2 for dialogue and can install Full Studio model packs for Qwen, OmniVoice, SFX, ambience, and music. The Docker launcher starts managed Qwen, OmniVoice, and SFX/music sidecars when supported. SFX, ambience, and music can still be disabled because those model-backed paths are heavier and license-dependent.
 
 <details>
 <summary>Show model details</summary>
@@ -226,9 +239,9 @@ Most defaults can be changed in `.env`. The most useful model overrides are `IND
 
 </details>
 
-## Enabled By Default
+## Docker Services Enabled By Default
 
-The beta starts these services by default:
+The Docker launcher starts these services by default:
 
 - Main Draft to Take backend.
 - Frontend UI.
@@ -240,7 +253,7 @@ Qwen is enabled by default because emotion detection depends on it. You can turn
 
 ## SFX And Music
 
-SFX/music generation is enabled by default when Docker can see an NVIDIA GPU. The current model-backed generators are experimental, heavier, and license-dependent, so you can still turn them off.
+SFX/music generation is enabled by default when Docker can see an NVIDIA GPU. In the installer preview, Full Studio can download the related model packs, but the heavier native sound-design path is still a preview area. The current model-backed generators are experimental, heavier, and license-dependent, so you can still turn them off.
 
 To disable SFX/music, edit `.env` and set:
 
@@ -321,6 +334,14 @@ Review the file before posting it publicly. Do not share private scripts, voices
 
 ## Common Problems
 
+### Windows SmartScreen Warning
+
+The installer is unsigned during beta. Windows may warn that the app is from an unknown publisher. Check that the downloaded installer matches the SHA256 checksum on the release page.
+
+### Installer First Start Looks Slow
+
+This is expected on a fresh install. Runtime setup and model downloads can take a while, especially with `Full Studio (recommended)` selected. Keep the launch window open and let it finish.
+
 ### Docker Image Pull Failed
 
 Make sure Docker Desktop is running and your network can reach GitHub Container Registry.
@@ -333,7 +354,7 @@ The launcher will warn if Docker cannot see your NVIDIA GPU. Check Docker Deskto
 
 The app may continue in CPU mode, but generation will be much slower.
 
-### First Start Looks Slow
+### Docker First Start Looks Slow
 
 This is expected on a fresh install. Docker images and model files are large. Keep the terminal open and watch the logs before assuming it has crashed.
 
@@ -366,10 +387,11 @@ Use this repo's Issues tab.
 Good bug reports include:
 
 - Windows version.
+- Whether you used the installer or Docker launcher.
 - GPU model and VRAM.
 - System RAM.
-- Docker Desktop version.
-- Whether Docker GPU support works.
+- Docker Desktop version, if using Docker.
+- Whether Docker GPU support works, if using Docker.
 - What you clicked.
 - What you expected.
 - What happened.
@@ -381,6 +403,7 @@ Please do not upload private scripts, paid voices, private speaker samples, toke
 
 Useful beta feedback includes:
 
+- Installer setup, first launch, model download, and uninstall issues.
 - First-run setup problems.
 - Model download problems.
 - Voice preparation and speaker library issues.

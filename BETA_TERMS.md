@@ -1,10 +1,11 @@
 # Draft to Take Beta Notes
 
-Draft to Take beta is early-access software for testing the local Docker workflow.
+Draft to Take beta is early-access software for testing the local Windows installer preview and Docker fallback workflow.
 
 ## What You Are Testing
 
-- Local Docker startup on real Windows machines.
+- Windows installer setup, launch, model downloads, and uninstall preservation.
+- Local Docker startup on real Windows machines for fallback/container users.
 - First-run model downloads.
 - Voice setup and Script Canvas workflow.
 - Timeline generation, review, retry, and export.
@@ -23,7 +24,7 @@ Draft to Take beta is early-access software for testing the local Docker workflo
 
 ## SFX And Music Notice
 
-SFX/music generation is optional, experimental, and disabled by default in the beta launcher.
+SFX/music generation is optional, experimental, and heavier than the core dialogue path. The Docker launcher can enable it automatically when GPU support is available; the Windows installer Full Studio path can download the related model packs, but native sound-design support is still preview-level.
 
 Some model-backed SFX/music engines may use non-commercial or research-only weights. Treat generated SFX/music as license-dependent unless you have checked the active model terms for your intended use.
 
@@ -39,4 +40,4 @@ Please use the public release repository Issues tab for:
 - bad error messages
 - feature ideas that would make the workflow easier
 
-When reporting a bug, include your Windows version, GPU, VRAM, Docker Desktop version, and whether you ran `collect-diagnostics.bat`.
+When reporting a bug, include your Windows version, GPU, VRAM, whether you used the installer or Docker launcher, Docker Desktop version if relevant, and whether you ran diagnostics.
