@@ -10,7 +10,7 @@ Older saved projects should now open into Script Canvas through compatibility lo
 
 ## Quick Start
 
-1. Install Draft to Take from the latest GitHub prerelease, or start the Docker fallback with `start.bat`.
+1. Install Draft to Take from the latest GitHub beta release, or start the Docker fallback with `start.bat`.
 2. Open the app from the Start Menu or at `http://localhost:3000`.
 3. Use `Try Demo Project` on Home if you want a ready-made short scene to inspect first.
 4. Add prepared speaker WAV files in `shared/audio/speakers`, create synthetic voices in `Voices`, or prepare a source clip into a reusable voice.

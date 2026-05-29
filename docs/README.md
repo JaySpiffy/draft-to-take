@@ -6,7 +6,7 @@ This repo does not contain the private Draft to Take source code or model weight
 
 ## Start Here
 
-- [Releases page](https://github.com/JaySpiffy/draft-to-take/releases) - download the Windows installer preview or the Docker launcher ZIP from the newest Draft to Take beta prerelease.
+- [Releases page](https://github.com/JaySpiffy/draft-to-take/releases) - download the Windows installer preview or the Docker launcher ZIP from the newest Draft to Take beta release.
 - [User Manual](USER_MANUAL.md) - the main app walkthrough, from first launch to exported mix.
 - [Tutorial Series](tutorials/README.md) - short video scripts and shot lists for the beginner flow.
 - [Script Canvas Authoring Guide](SCRIPT_CANVAS_AUTHORING_GUIDE.md) - the exact script, emotion, SFX, ambience, and music marker format the canvas understands.

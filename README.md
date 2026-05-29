@@ -45,7 +45,7 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 This is the simplest path for most Windows testers.
 
-1. Open the latest prerelease: [Draft to Take v3.0.0 beta 10](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.10).
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 10](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.10).
 2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.10.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.10/DraftToTake-Native-Setup-v3.0.0-beta.10.exe).
 3. Run the installer and choose `Full Studio (recommended)`.
 4. Start `Draft to Take` from the Start Menu.
@@ -268,7 +268,7 @@ Only use SFX/music if your machine has enough VRAM and you understand that gener
 
 ## Updating The Beta
 
-Installer users can update by downloading the newer setup `.exe` from the latest prerelease and running it. Your shared folder under `%USERPROFILE%\DraftToTake\shared` is preserved.
+Installer users can update by downloading the newer setup `.exe` from the latest beta release and running it. Your shared folder under `%USERPROFILE%\DraftToTake\shared` is preserved.
 
 Docker launcher users can update to a newer beta:
 
