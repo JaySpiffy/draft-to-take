@@ -102,11 +102,23 @@ The sample includes dialogue, IndexTTS2 emotion comments, ambience, music, and S
 
 ## Product Tour
 
+### Home: start with the right next step
+
+![Draft to Take home and demo setup](screenshots/00-home.png)
+
+Home keeps the first path obvious: create or choose voices, assign readable script roles, open a demo, then place and generate the scene.
+
 ### Script Canvas: write, revise, cast, and generate
 
 ![Script Canvas production view](screenshots/01-script-canvas.png)
 
-Script Canvas is the main workspace: draft or import scripts, assign speakers, detect emotions, clean up production lines, and send scenes to the embedded timeline.
+Script Canvas is the main workspace: draft or import scripts, assign prepared voices to readable speaker labels, detect emotions, clean up production lines, and send scenes to the embedded timeline.
+
+### Voice Workbench: assign roles without renaming your script
+
+![Voice Workbench role assignment](screenshots/04-voice-workbench.png)
+
+The Voice Workbench lets you test prepared voices and map them to script roles such as narrator, host, guest, or any character name you wrote.
 
 ### Embedded Timeline: shape the finished take
 
