@@ -45,8 +45,8 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 This is the simplest path for most Windows testers.
 
-1. Open the latest beta release: [Draft to Take v3.0.0 beta 10](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.10).
-2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.10.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.10/DraftToTake-Native-Setup-v3.0.0-beta.10.exe).
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 11](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.11).
+2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.11.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.11/DraftToTake-Native-Setup-v3.0.0-beta.11.exe).
 3. Run the installer and choose `Full Studio (recommended)`.
 4. Start `Draft to Take` from the Start Menu.
 
@@ -57,7 +57,7 @@ The installer preview is the normal-user onboarding path now. It is still beta s
 Checksum:
 
 ```text
-06AD65A37CEFC2A6F69C815D9EB32688FE8E3EC2B7FCCA4072C01A04F48A2F20
+B896563C5B7B88CDB19D6B69A2BBA2DE4483B8653E5B846A4AC57DF0CE5A9A34
 ```
 
 ### Option B: Docker Launcher
@@ -146,9 +146,9 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.10` is ready for a small Windows beta, with the installer preview as the main onboarding path and Docker still available as the fallback.
+`v3.0.0-beta.11` is the latest Windows installer hotfix. Docker fallback users should keep using the public `v3.0.0-beta.10` image tag unless a newer Docker image release is published.
 
-This update improves Script Canvas voice onboarding, the Voice Workbench, first-run starter voice guidance, voice preview feedback, dark-mode readability, timeline/source editor resizing, beginner status messaging, and adds the first public Windows installer preview.
+The installer hotfix adds the missing Hugging Face Hub dependency required for first-run model downloads, improves native startup diagnostics, extends the health-check wait, and falls back to a nearby port when `3000` is already busy.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
