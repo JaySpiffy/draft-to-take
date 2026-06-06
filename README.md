@@ -45,8 +45,8 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 This is the simplest path for most Windows testers.
 
-1. Open the latest beta release: [Draft to Take v3.0.0 beta 12](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.12).
-2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.12.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.12/DraftToTake-Native-Setup-v3.0.0-beta.12.exe).
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 13](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.13).
+2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.13.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.13/DraftToTake-Native-Setup-v3.0.0-beta.13.exe).
 3. Run the installer and choose `Full Studio (recommended)`.
 4. Start `Draft to Take` from the Start Menu.
 
@@ -57,7 +57,7 @@ The installer preview is the normal-user onboarding path now. It is still beta s
 Checksum:
 
 ```text
-5B7CD587750F7D7B3DB0B6CDFF45A3FF58270CAC0CE6F8F74C0997FA0F8B4675
+D61F6BDBF5770B8254F9D7349D93EB9D69974FC1771941F3428D2A048D257E8B
 ```
 
 ### Option B: Docker Launcher
@@ -146,9 +146,9 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.12` is the latest Windows installer hotfix. Docker fallback users should keep using the public `v3.0.0-beta.10` image tag unless a newer Docker image release is published.
+`v3.0.0-beta.13` is the latest Windows installer hotfix. Docker fallback users should keep using the public `v3.0.0-beta.10` image tag unless a newer Docker image release is published.
 
-The installer hotfix repairs stale native Python runtimes left behind by earlier installs, adds the missing Hugging Face Hub dependency required for first-run model downloads, improves native startup diagnostics, extends the health-check wait, and falls back to a nearby port when `3000` is already busy.
+The installer hotfix repairs stale native Python runtimes left behind by earlier installs, adds the missing Hugging Face Hub dependency required for first-run model downloads, fixes a PowerShell startup-diagnostics edge case, extends the health-check wait, and falls back to a nearby port when `3000` is already busy.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
