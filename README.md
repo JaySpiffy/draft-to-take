@@ -13,7 +13,7 @@ Turn your scripts into finished multi-speaker audio, complete with emotion, soun
 
 ![Draft to Take app preview](media/draft-to-take-20s-app-clip.gif)
 
-Formerly **IndexTTS Workflow Studio**. This repository is the public beta home for Draft to Take, the next-generation version of the original prototype. Most Windows testers should start with the installer preview attached to the latest release; the Docker launcher remains available as the fallback path.
+Formerly **IndexTTS Workflow Studio**. This repository is the public beta home for Draft to Take, the next-generation version of the original prototype. Most Windows testers should start with the Docker launcher attached to the latest release; the native Windows installer is still experimental.
 
 ## The Workflow
 
@@ -25,7 +25,7 @@ Write or import a script -> assign prepared voices -> detect emotion -> generate
 
 Use it for audio drama, game dialogue, audiobook tests, YouTube narration, podcast sketches, horror scenes, or any project where you want a local script-to-audio workflow instead of a cloud text box.
 
-This beta repo contains the Windows installer preview, Docker launcher fallback, configuration, diagnostics scripts, and tester docs. It does not contain the private source code or model weights. The installer and Docker launcher both download supported model files into your own local machine.
+This beta repo contains the Docker launcher, configuration, diagnostics scripts, tester docs, and an experimental Windows installer preview. It does not contain the private source code or model weights. The Docker launcher and installer both download supported model files into your own local machine.
 
 Looking for the old prototype? The previous IndexTTS Workflow Studio code is preserved on the [`legacy-v2`](https://github.com/JaySpiffy/draft-to-take/tree/legacy-v2) branch and the [`v2-legacy-final`](https://github.com/JaySpiffy/draft-to-take/tree/v2-legacy-final) tag.
 
@@ -41,39 +41,49 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 ## Download And Start
 
-### Option A: Windows Installer Preview
+### Option A: Docker Launcher Recommended
 
-This is the simplest path for most Windows testers.
+This is the recommended public beta path while the native installer is still being hardened.
 
-1. Open the latest beta release: [Draft to Take v3.0.0 beta 13](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.13).
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 14](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.14).
+2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.14.zip` from the assets.
+3. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
+4. Start Docker Desktop.
+5. Double-click `start.bat`.
+6. Open the URL printed in the terminal, usually:
+
+```text
+http://localhost:3000
+```
+
+First launch can be slow because Docker images and model files are large. Keep the terminal open and let it finish.
+
+The launcher pulls these public images from GitHub Container Registry:
+
+```text
+ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.10
+ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.10
+ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.10
+ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.10
+ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.10
+```
+
+### Option B: Native Windows Installer Experimental
+
+Use this only if you specifically want to test the dockerless installer preview. The Docker launcher above is currently more reliable for public testers.
+
+1. Open [Draft to Take v3.0.0 beta 13](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.13).
 2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.13.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.13/DraftToTake-Native-Setup-v3.0.0-beta.13.exe).
 3. Run the installer and choose `Full Studio (recommended)`.
 4. Start `Draft to Take` from the Start Menu.
 
 The installer is unsigned during beta, so Windows may show a SmartScreen warning. It does not bundle model weights; the app downloads models into your local `%USERPROFILE%\DraftToTake\shared` folder.
 
-The installer preview is the normal-user onboarding path now. It is still beta software: the core Script Canvas dialogue workflow is the priority, while heavier Full Studio model packs and sidecars may still have rough edges.
-
-Checksum:
+Installer checksum:
 
 ```text
 D61F6BDBF5770B8254F9D7349D93EB9D69974FC1771941F3428D2A048D257E8B
 ```
-
-### Option B: Docker Launcher
-
-Use this if you already prefer Docker Desktop, need the known-good container fallback, or want to inspect the launcher files.
-
-1. Download this repo as a ZIP.
-2. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
-3. Double-click `start.bat`.
-4. Open the URL printed in the terminal, usually:
-
-```text
-http://localhost:3000
-```
-
-First launch can be slow because images and model files are large. Keep the terminal open and let it finish.
 
 ## Try This First
 
@@ -146,9 +156,9 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.13` is the latest Windows installer hotfix. Docker fallback users should keep using the public `v3.0.0-beta.10` image tag unless a newer Docker image release is published.
+`v3.0.0-beta.14` is the latest public Docker launcher release. It uses the verified public `v3.0.0-beta.10` Docker image tag.
 
-The installer hotfix repairs stale native Python runtimes left behind by earlier installs, adds the missing Hugging Face Hub dependency required for first-run model downloads, fixes a PowerShell startup-diagnostics edge case, extends the health-check wait, and falls back to a nearby port when `3000` is already busy.
+The native installer preview remains available on `v3.0.0-beta.13`, but it is experimental while startup and generation issues are being worked through.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
@@ -160,7 +170,7 @@ All beta container images are public and pullable from GitHub Container Registry
 
 ## Who This Beta Is For
 
-This beta is best for people comfortable testing local AI tools on Windows. The installer path is now the easiest onboarding route, but it is still unsigned and marked as a preview.
+This beta is best for people comfortable testing local AI tools on Windows. The Docker launcher is currently the recommended route; the installer path is unsigned and experimental.
 
 Good testers:
 
@@ -176,11 +186,11 @@ Good testers:
 - 32 GB system RAM recommended for the full workflow.
 - 12-16 GB VRAM recommended for the smoother local AI path.
 - Plenty of disk space. First-run model downloads can be many gigabytes.
-- Docker Desktop with WSL2 and NVIDIA Container Toolkit only if using the Docker launcher path.
+- Docker Desktop with WSL2 and NVIDIA Container Toolkit for the recommended Docker launcher path.
 
 CPU fallback can work for some paths, but it will be much slower.
 
-## What The Windows Installer Does
+## What The Experimental Windows Installer Does
 
 The installer:
 
@@ -191,7 +201,7 @@ The installer:
 - Downloads model packs after install or on first launch instead of bundling model weights in the setup file.
 - Preserves `%USERPROFILE%\DraftToTake\shared` during updates and uninstall.
 
-## What The Docker Launcher Does
+## What The Recommended Docker Launcher Does
 
 The launcher:
 
@@ -280,7 +290,7 @@ Only use SFX/music if your machine has enough VRAM and you understand that gener
 
 ## Updating The Beta
 
-Installer users can update by downloading the newer setup `.exe` from the latest beta release and running it. Your shared folder under `%USERPROFILE%\DraftToTake\shared` is preserved.
+Installer users can update by downloading the newer setup `.exe` from the installer release and running it. Your shared folder under `%USERPROFILE%\DraftToTake\shared` is preserved.
 
 Docker launcher users can update to a newer beta:
 
