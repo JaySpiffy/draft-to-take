@@ -45,8 +45,8 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 This is the recommended public beta path while the native installer is still being hardened.
 
-1. Open the latest beta release: [Draft to Take v3.0.0 beta 15](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.15).
-2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.15.zip` from the assets.
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 16](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.16).
+2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.16.zip` from the assets.
 3. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
 4. Start Docker Desktop.
 5. Double-click `start.bat`.
@@ -59,6 +59,8 @@ http://localhost:3000
 First launch can be slow because Docker images and model files are large. Keep the terminal open and let it finish.
 
 If Docker reports container startup errors such as `exec format error` after a partial or interrupted pull, run `repair-docker-images.bat`, then run `start.bat` again. The repair script removes only Draft to Take beta containers/images and keeps your shared voices, models, projects, and exports.
+
+Beta 16 pulls the large Docker images one service at a time and retries transient `unexpected EOF` pull failures automatically.
 
 The launcher pulls these public images from GitHub Container Registry:
 
@@ -158,7 +160,7 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.15` is the latest public Docker launcher release. It uses the verified public `v3.0.0-beta.10` Docker image tag.
+`v3.0.0-beta.16` is the latest public Docker launcher release. It uses the verified public `v3.0.0-beta.10` Docker image tag.
 
 The native installer preview remains available on `v3.0.0-beta.13`, but it is experimental while startup and generation issues are being worked through.
 
@@ -372,6 +374,8 @@ This is expected on a fresh install. Runtime setup and model downloads can take 
 Make sure Docker Desktop is running and your network can reach GitHub Container Registry.
 
 The images are public, so `docker login ghcr.io` should not be required for this beta.
+
+The first pull is large. The beta 16 launcher pulls each enabled service image separately and retries transient `unexpected EOF` failures. If it still fails, restart Docker Desktop and run `start.bat` again.
 
 If a pull half-completes or containers later fail with `exec format error` or `input/output error`, run:
 

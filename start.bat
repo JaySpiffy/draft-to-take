@@ -126,13 +126,31 @@ echo.
 echo [INFO] Shared files live here:
 echo        %DRAFT_TO_TAKE_SHARED_DIR%
 echo.
-echo [INFO] Pulling and starting Draft to Take beta images...
-docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% pull
-if errorlevel 1 (
-    echo [ERROR] Docker image pull failed.
-    echo         If these are GHCR images, confirm the packages are public or run docker login ghcr.io.
-    pause
-    exit /b 1
+if "%DRAFT_TO_TAKE_PULL_RETRIES%"=="" set "DRAFT_TO_TAKE_PULL_RETRIES=3"
+
+echo [INFO] Pulling Draft to Take beta images one service at a time...
+echo        Large first-time downloads can occasionally stop with unexpected EOF.
+echo        The launcher will retry each enabled image up to %DRAFT_TO_TAKE_PULL_RETRIES% times.
+
+call :PullService frontend
+if errorlevel 1 goto PullFailed
+
+call :PullService backend
+if errorlevel 1 goto PullFailed
+
+if /I not "%INDTEXTS_SCRIPT_LLM_ENABLED%"=="false" (
+    call :PullService script-llm
+    if errorlevel 1 goto PullFailed
+)
+
+if /I not "%INDTEXTS_OMNIVOICE_ENABLED%"=="false" (
+    call :PullService omnivoice
+    if errorlevel 1 goto PullFailed
+)
+
+if /I "%INDTEXTS_SFX_ENABLED%"=="true" (
+    call :PullService sfx
+    if errorlevel 1 goto PullFailed
 )
 
 docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% up -d
@@ -212,3 +230,35 @@ for /f "tokens=* delims=" %%i in ('docker compose %COMPOSE_ENV_FILES% %COMPOSE_F
     if not defined %~3 set "%~3=%%i"
 )
 exit /b 0
+
+:PullService
+set "DRAFT_TO_TAKE_PULL_SERVICE=%~1"
+set /a DRAFT_TO_TAKE_PULL_ATTEMPT=1
+
+:PullServiceAttempt
+echo.
+echo [INFO] Pulling %DRAFT_TO_TAKE_PULL_SERVICE% image (attempt %DRAFT_TO_TAKE_PULL_ATTEMPT%/%DRAFT_TO_TAKE_PULL_RETRIES%)...
+docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% pull %DRAFT_TO_TAKE_PULL_SERVICE%
+if not errorlevel 1 (
+    echo [OK] Pulled %DRAFT_TO_TAKE_PULL_SERVICE% image.
+    exit /b 0
+)
+
+if %DRAFT_TO_TAKE_PULL_ATTEMPT% GEQ %DRAFT_TO_TAKE_PULL_RETRIES% (
+    echo [ERROR] Could not pull %DRAFT_TO_TAKE_PULL_SERVICE% after %DRAFT_TO_TAKE_PULL_RETRIES% attempts.
+    exit /b 1
+)
+
+echo [WARNING] Pull failed for %DRAFT_TO_TAKE_PULL_SERVICE%; retrying in 10 seconds...
+set /a DRAFT_TO_TAKE_PULL_ATTEMPT+=1
+timeout /t 10 /nobreak >nul
+goto PullServiceAttempt
+
+:PullFailed
+echo.
+echo [ERROR] Docker image pull failed after retries.
+echo         The images are public, so docker login should not normally be required.
+echo         If the error was unexpected EOF, restart Docker Desktop and run start.bat again.
+echo         If containers later fail with exec format error, run repair-docker-images.bat.
+pause
+exit /b 1
