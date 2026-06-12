@@ -60,16 +60,16 @@ First launch can be slow because Docker images and model files are large. Keep t
 
 If Docker reports container startup errors such as `exec format error` after a partial or interrupted pull, run `repair-docker-images.bat`, then run `start.bat` again. The repair script removes only Draft to Take beta containers/images and keeps your shared voices, models, projects, and exports.
 
-Beta 16 pulls the large Docker images one service at a time and retries transient `unexpected EOF` pull failures automatically.
+Beta 16 pulls the large Docker images one service at a time, retries transient `unexpected EOF` pull failures automatically, and now points at the refreshed beta 16 app images.
 
 The launcher pulls these public images from GitHub Container Registry:
 
 ```text
-ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.10
-ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.10
-ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.10
-ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.10
-ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.10
+ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.16
+ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.16
+ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.16
+ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.16
+ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.16
 ```
 
 ### Option B: Native Windows Installer Experimental
@@ -160,7 +160,7 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.16` is the latest public Docker launcher release. It uses the verified public `v3.0.0-beta.10` Docker image tag.
+`v3.0.0-beta.16` is the latest public Docker launcher release. It uses refreshed public `v3.0.0-beta.16` Docker images.
 
 The native installer preview remains available on `v3.0.0-beta.13`, but it is experimental while startup and generation issues are being worked through.
 
@@ -316,7 +316,7 @@ Your shared folder under `%USERPROFILE%\DraftToTake\shared` is not deleted.
 If a new release uses a new Docker image tag, check `.env` and update:
 
 ```text
-DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.10
+DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.16
 ```
 
 ## Stopping
