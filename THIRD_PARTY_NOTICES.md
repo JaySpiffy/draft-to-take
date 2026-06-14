@@ -4,6 +4,8 @@ Draft to Take beta is an application layer around third-party local AI models an
 
 The launcher, docs, and helper scripts in this public beta repository are MIT licensed. That MIT license does not relicense Draft to Take container images, private source code, third-party model weights, third-party runtimes, or generated model outputs.
 
+Draft to Take does not claim ownership of user-created scripts, projects, voice samples, source clips, generated audio, SFX, ambience, music, or exported mixes. However, Draft to Take cannot grant rights it does not own. Users remain responsible for input rights, voice consent, impersonation/publicity/privacy rules, and the license terms of any third-party model or runtime they use.
+
 ## IndexTTS2
 
 Draft to Take uses the official IndexTTS2 model/runtime family for dialogue generation.
@@ -37,7 +39,7 @@ Users remain responsible for lawful, authorized use of generated or cloned voice
 
 ## SFX And Music Models
 
-The optional SFX/music sidecar is disabled by default in the beta launcher.
+The optional SFX/music sidecar can be enabled by the beta launcher when Docker GPU support is available, and can be disabled with `INDTEXTS_SFX_ENABLED=false`.
 
 Possible model sources:
 
@@ -45,9 +47,9 @@ Possible model sources:
 - Woosh checkpoint mirror used by the sidecar default: https://huggingface.co/AEmotionStudio/woosh-models
 - MusicGen music beds: https://huggingface.co/facebook/musicgen-small
 
-Woosh and MusicGen model-backed generation should be treated as free/experimental and license-dependent unless the active model/backend terms have been checked and are clearly suitable for your intended use.
+Woosh and MusicGen model-backed generation should be treated as experimental and license-dependent unless the active model/backend terms have been checked and are clearly suitable for your intended use.
 
-Draft to Take Pro should not be treated as granting extra rights to third-party models or their outputs.
+Draft to Take should not be treated as granting extra rights to third-party models or their outputs.
 
 ## User Data
 

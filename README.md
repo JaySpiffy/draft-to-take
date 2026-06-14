@@ -464,9 +464,13 @@ Useful beta feedback includes:
 
 The launcher, docs, and helper scripts in this repository are released under the [MIT License](LICENSE).
 
+Draft to Take does not claim ownership of scripts, projects, voices, source clips, generated audio, SFX, ambience, music, or exported mixes created or provided by users. You may use outputs you create with Draft to Take for commercial or non-commercial creative projects, provided you have the necessary rights to the input material and comply with any applicable third-party model licenses.
+
 This beta does not sell, bundle, or grant rights to third-party model weights. The app may download models from official upstream sources into your local machine.
 
-Draft to Take container images, private source code, third-party model weights, and generated model outputs are governed separately by their own terms.
+The public launcher license does not grant ownership of Draft to Take, access to private source code, resale rights, redistribution rights for the full app, sublicensing rights, or the right to repackage Draft to Take as your own product.
+
+Draft to Take container images, private source code, third-party model weights, third-party runtimes, and generated model outputs are governed separately by their own terms.
 
 Read:
 

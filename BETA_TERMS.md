@@ -1,6 +1,6 @@
 # Draft to Take Beta Notes
 
-Draft to Take beta is early-access software for testing the local Windows installer preview and Docker fallback workflow.
+Draft to Take beta is early-access software for testing the local Windows installer preview and Docker fallback workflow. These notes are a plain-English beta policy, not legal advice.
 
 ## What You Are Testing
 
@@ -21,6 +21,22 @@ Draft to Take beta is early-access software for testing the local Windows instal
 - Do not post private scripts, voice samples, API keys, or personal audio in public issues.
 - Generated voices and outputs remain your responsibility.
 - Third-party models have their own licenses. Draft to Take does not grant extra rights to those models or their outputs.
+
+## Creator Output Rights
+
+Draft to Take does not claim ownership of scripts, projects, voice samples, source clips, prepared voices, generated audio, SFX, ambience, music, or exported mixes created or provided by users.
+
+You may use outputs you create with Draft to Take for commercial or non-commercial creative projects, provided you have the necessary rights to the input material and comply with any applicable third-party model licenses.
+
+You are responsible for making sure you have permission to use any scripts, voices, samples, characters, trademarks, music, SFX, or other material you put into the app. You are also responsible for lawful and ethical use of synthetic or cloned voices, including impersonation, consent, publicity, privacy, and copyright rules that may apply where you live or publish.
+
+Attribution to Draft to Take is appreciated when practical, especially in public demos or videos, but these beta notes do not require attribution for ordinary creator outputs unless a separate written agreement says otherwise.
+
+## App Ownership And Redistribution
+
+The public launcher, docs, and helper scripts are released under the repository license. That does not grant ownership of Draft to Take, access to private source code, resale rights, redistribution rights for the full app, sublicensing rights, or the right to repackage Draft to Take as your own product.
+
+Special permissions, founding-tester arrangements, sponsorship terms, or private commercial agreements must be granted separately in writing by JaySpiffy.
 
 ## SFX And Music Notice
 
