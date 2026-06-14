@@ -18,7 +18,7 @@ for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do (
 )
 
 if "%DRAFT_TO_TAKE_IMAGE_PREFIX%"=="" set "DRAFT_TO_TAKE_IMAGE_PREFIX=ghcr.io/jayspiffy"
-if "%DRAFT_TO_TAKE_IMAGE_TAG%"=="" set "DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.10"
+if "%DRAFT_TO_TAKE_IMAGE_TAG%"=="" set "DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.17"
 
 docker info >nul 2>&1
 if errorlevel 1 (
@@ -26,6 +26,18 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+
+echo [INFO] Docker disk usage before cleanup:
+docker system df
+echo.
+echo [INFO] This repair removes only Draft to Take beta images for the selected tag.
+echo        Your projects, voices, models, and exports live outside Docker under:
+if "%DRAFT_TO_TAKE_SHARED_DIR%"=="" (
+    echo        %USERPROFILE%\DraftToTake\shared
+) else (
+    echo        %DRAFT_TO_TAKE_SHARED_DIR%
+)
+echo.
 
 set "COMPOSE_ENV_FILES=--env-file .env"
 if exist ".draft-to-take-runtime.env" set "COMPOSE_ENV_FILES=%COMPOSE_ENV_FILES% --env-file .draft-to-take-runtime.env"
@@ -55,6 +67,9 @@ echo [INFO] Cleaning dangling Docker layers...
 docker image prune -f >nul 2>&1
 
 echo.
+echo [INFO] Docker disk usage after cleanup:
+docker system df
+echo.
 echo [OK] Repair cleanup finished.
 echo Shared data was not deleted:
 if "%DRAFT_TO_TAKE_SHARED_DIR%"=="" (
@@ -62,6 +77,11 @@ if "%DRAFT_TO_TAKE_SHARED_DIR%"=="" (
 ) else (
     echo   %DRAFT_TO_TAKE_SHARED_DIR%
 )
+echo.
+echo If Docker Desktop still shows very high disk usage after repeated failed pulls,
+echo use Docker Desktop's built-in Troubleshoot / Clean or Purge data option.
+echo That resets Docker images and containers, so you will need to run start.bat again.
+echo It does not delete the Draft to Take shared folder shown above.
 echo.
 echo Run start.bat to pull fresh images and start Draft to Take again.
 pause

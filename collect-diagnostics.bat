@@ -33,6 +33,15 @@ echo.
     echo == Docker Compose Version ==
     docker compose version
     echo.
+    echo == Docker Disk Usage ==
+    docker system df
+    echo.
+    echo == Docker Builder Cache Usage ==
+    docker builder du
+    echo.
+    echo == Windows Drive Free Space ==
+    powershell -NoProfile -Command "Get-PSDrive -PSProvider FileSystem | Select-Object Name,Used,Free | Format-Table -AutoSize"
+    echo.
     echo == GPU Check ==
     docker run --rm --gpus all nvidia/cuda:12.8.0-base-ubuntu22.04 nvidia-smi
     echo.

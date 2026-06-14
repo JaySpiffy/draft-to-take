@@ -129,8 +129,15 @@ echo.
 if "%DRAFT_TO_TAKE_PULL_RETRIES%"=="" set "DRAFT_TO_TAKE_PULL_RETRIES=3"
 
 echo [INFO] Pulling Draft to Take beta images one service at a time...
+echo        First pulls are large. A full GPU setup can use roughly 25-40 GB
+echo        of Docker disk space before app models download into your shared folder.
+echo        Pull progress can pause near 99%% while Docker verifies and extracts layers.
+echo        That pause can last several minutes on slower disks.
 echo        Large first-time downloads can occasionally stop with unexpected EOF.
 echo        The launcher will retry each enabled image up to %DRAFT_TO_TAKE_PULL_RETRIES% times.
+echo.
+echo [INFO] Current Docker disk usage:
+docker system df
 
 call :PullService frontend
 if errorlevel 1 goto PullFailed
