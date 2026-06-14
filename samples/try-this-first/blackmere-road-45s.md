@@ -12,7 +12,7 @@ Use this small scene to test the core Draft to Take workflow:
 8. Click `Generate Audio`.
 9. Preview the mix, then download it.
 
-Tip: If you have not created matching characters yet, Draft to Take can still route lines to available prepared voices. For the cleanest result, create characters with the labels below first.
+Tip: If the voice roles below are not assigned yet, open the Voice Workbench and map each role to a prepared voice before generating. The script labels can stay readable, such as `Narrator` or `Captain Quibble`; they do not need to match voice filenames.
 
 ## Chapter 1: Blackmere Road
 

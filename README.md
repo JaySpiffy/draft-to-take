@@ -254,7 +254,7 @@ The default Windows installer path uses IndexTTS2 for dialogue and can install F
 | Feature area | Default model/source | Enabled by default | Where it is stored | Notes |
 | --- | --- | --- | --- | --- |
 | Dialogue TTS | `IndexTeam/IndexTTS-2` | Yes | `shared\models\checkpoints` | Main Script Canvas and timeline speech generation. The upstream bundle includes the IndexTTS2 checkpoints, tokenizer/BPE assets, emotion and speaker matrices, and related vocoder/runtime files used by IndexTTS2. |
-| Script assistant and emotion detection | `ufoym/Qwen3-8B-Q4_K_M-GGUF` / `qwen3-8b-q4_k_m.gguf` | Yes | `shared\models\llm` | Managed llama.cpp sidecar used by the optional AI Thread and by Qwen emotion-vector detection. |
+| Script assistant and emotion detection | `ufoym/Qwen3-8B-Q4_K_M-GGUF` / `qwen3-8b-q4_k_m.gguf` | Yes | `shared\models\llm` | Managed llama.cpp sidecar used by Qwen emotion-vector detection and, only when explicitly enabled, the experimental AI Thread. |
 | Reusable voice design | `k2-fsa/OmniVoice` | Yes | Hugging Face cache under `shared\models\checkpoints\hf_cache` | Creates prepared voice WAVs for the Voice Studio. Final dialogue rendering still uses IndexTTS2. |
 | SFX and ambience | `AEmotionStudio/woosh-models`, default model `Woosh-DFlow` | Yes when Docker GPU support is available | `shared\models\woosh` | SFX/music sidecar. `Woosh-Flow` can be selected as a slower quality option. |
 | Music beds | `facebook/musicgen-small` | Yes when Docker GPU support is available | Hugging Face cache under `shared\models\checkpoints\hf_cache` | Music generation through the SFX/music sidecar. |
@@ -272,7 +272,7 @@ The Docker launcher starts these services by default:
 
 - Main Draft to Take backend.
 - Frontend UI.
-- Managed Qwen sidecar, used for emotion detection and the optional AI Thread.
+- Managed Qwen sidecar, used for emotion detection and the experimental AI Thread when explicitly enabled.
 - OmniVoice sidecar, used for beta testing reusable voice design.
 - SFX/music sidecar, when Docker GPU support is available.
 

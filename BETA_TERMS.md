@@ -9,7 +9,7 @@ Draft to Take beta is early-access software for testing the local Windows instal
 - First-run model downloads.
 - Voice setup and Script Canvas workflow.
 - Timeline generation, review, retry, and export.
-- Optional local Qwen support for emotion detection and AI Thread workflows.
+- Optional local Qwen support for emotion detection and the experimental AI Thread when explicitly enabled.
 - Optional OmniVoice sidecar for reusable voice design.
 - Optional SFX/music tools, if you deliberately enable them.
 

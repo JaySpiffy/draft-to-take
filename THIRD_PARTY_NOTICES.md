@@ -20,7 +20,7 @@ Draft to Take does not bundle IndexTTS2 model weights in this release repo. The 
 
 ## Qwen / Script LLM
 
-The beta can run an optional managed local Qwen GGUF sidecar for emotion detection and AI Thread workflows.
+The beta can run an optional managed local Qwen GGUF sidecar for emotion detection and the experimental AI Thread when explicitly enabled.
 
 Default model source:
 

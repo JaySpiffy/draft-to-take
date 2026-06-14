@@ -186,7 +186,7 @@ SFX Studio is optional and heavier than the core dialogue path. The Docker launc
 
 - SFX generation uses Woosh-DFlow by default. Use `SFX_WOOSH_MODEL_NAME=Woosh-Flow` for the slower higher-quality Woosh option.
 - Music generation uses MusicGen: `facebook/musicgen-small`.
-- These model-backed generators are license-dependent and should be treated as experimental unless you have checked the active model terms for your intended use. Draft to Take Pro should not be treated as granting extra rights to third-party models or their outputs.
+- These model-backed generators are license-dependent and should be treated as experimental unless you have checked the active model terms for your intended use. Draft to Take should not be treated as granting extra rights to third-party models or their outputs.
 - Generate multiple takes, audition them, lock the best take, and place the asset on a timeline.
 - Script Canvas can batch-generate SFX, ambience, and music markers after dialogue generation.
 - SFX, ambience, and music are timeline assets, not dialogue clips, so they can overlap spoken lines.
