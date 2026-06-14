@@ -13,12 +13,18 @@ if not exist ".env" (
     echo [INFO] Created .env from .env.example.
 )
 
+call :ValidateEnvFile ".env"
+if errorlevel 1 (
+    pause
+    exit /b 1
+)
+
 for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do (
     if not "%%A"=="" set "%%A=%%B"
 )
 
-if "%DRAFT_TO_TAKE_IMAGE_PREFIX%"=="" set "DRAFT_TO_TAKE_IMAGE_PREFIX=ghcr.io/jayspiffy"
-if "%DRAFT_TO_TAKE_IMAGE_TAG%"=="" set "DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.17"
+if not defined DRAFT_TO_TAKE_IMAGE_PREFIX set "DRAFT_TO_TAKE_IMAGE_PREFIX=ghcr.io/jayspiffy"
+if not defined DRAFT_TO_TAKE_IMAGE_TAG set "DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.17"
 
 docker info >nul 2>&1
 if errorlevel 1 (
@@ -84,4 +90,14 @@ echo That resets Docker images and containers, so you will need to run start.bat
 echo It does not delete the Draft to Take shared folder shown above.
 echo.
 echo Run start.bat to pull fresh images and start Draft to Take again.
+echo.
+echo If Draft to Take works but old beta images are using disk space,
+echo run cleanup-docker-space.bat instead of this repair script.
 pause
+exit /b 0
+
+:ValidateEnvFile
+set "DTT_ENV_FILE=%~f1"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$path=$env:DTT_ENV_FILE; $badChars=[char[]](34,38,60,62,94,124); $lineNo=0; foreach ($line in Get-Content -LiteralPath $path -ErrorAction Stop) { $lineNo++; $trim=$line.Trim(); if ($trim -eq '' -or $trim.StartsWith('#')) { continue }; $eq=$line.IndexOf('='); if ($eq -lt 1) { continue }; $key=$line.Substring(0,$eq).Trim(); $value=$line.Substring($eq+1); $unsafe=$key -notmatch '^[A-Za-z_][A-Za-z0-9_]*$'; foreach ($ch in $badChars) { if ($value.Contains($ch)) { $unsafe=$true } }; if ($unsafe) { Write-Host ('[ERROR] Unsafe env entry on line {0}: {1}' -f $lineNo,$key); exit 2 } }; exit 0"
+set "DTT_ENV_FILE="
+exit /b %ERRORLEVEL%

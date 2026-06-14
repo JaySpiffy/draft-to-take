@@ -45,8 +45,8 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 This is the recommended public beta path while the native installer is still being hardened.
 
-1. Open the latest beta release: [Draft to Take v3.0.0 beta 17](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.17).
-2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.17.zip` from the assets.
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 18](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.18).
+2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.18.zip` from the assets.
 3. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
 4. Start Docker Desktop.
 5. Double-click `start.bat`.
@@ -58,18 +58,20 @@ http://localhost:3000
 
 First launch can be slow because Docker images and model files are large. A full GPU start can use roughly 25-40 GB of Docker disk space before app models download into `%USERPROFILE%\DraftToTake\shared`. Pull progress can also pause near 99% while Docker verifies and extracts layers; keep the terminal open and let it finish.
 
+Docker Desktop may keep older beta image tags after updates. If your drive loses a lot of space after updating, run `cleanup-docker-space.bat`; it removes old Draft to Take beta image tags and dangling image layers, but keeps your shared voices, models, projects, and exports.
+
 If Docker reports container startup errors such as `exec format error` after a partial or interrupted pull, run `repair-docker-images.bat`, then run `start.bat` again. The repair script removes only Draft to Take beta containers/images and keeps your shared voices, models, projects, and exports.
 
-Beta 17 keeps the safer one-service-at-a-time Docker pulls from beta 16 and adds the latest Script Canvas, timeline, voice assignment, and diagnostics fixes.
+Beta 18 keeps the refreshed Script Canvas, timeline, voice assignment, and diagnostics fixes from beta 17, then adds Docker disk cleanup guidance, safer launcher helpers, localhost-only service bindings, and backend file-path hardening.
 
 The launcher pulls these public images from GitHub Container Registry:
 
 ```text
-ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.17
-ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.17
-ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.17
-ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.17
-ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.17
+ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.18
+ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.18
+ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.18
+ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.18
+ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.18
 ```
 
 ### Option B: Native Windows Installer Experimental
@@ -160,7 +162,7 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.17` is the latest public Docker launcher release. It uses refreshed public `v3.0.0-beta.17` Docker images.
+`v3.0.0-beta.18` is the latest public Docker launcher release. It uses refreshed public `v3.0.0-beta.18` Docker images.
 
 The native installer preview remains available on `v3.0.0-beta.13`, but it is experimental while startup and generation issues are being worked through.
 
@@ -313,10 +315,18 @@ start.bat
 
 Your shared folder under `%USERPROFILE%\DraftToTake\shared` is not deleted.
 
+After the new version starts, you can reclaim old beta Docker images with:
+
+```text
+cleanup-docker-space.bat
+```
+
+This keeps the current image tag and removes older Draft to Take beta image tags. It does not delete `%USERPROFILE%\DraftToTake\shared`.
+
 If a new release uses a new Docker image tag, check `.env` and update:
 
 ```text
-DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.17
+DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.18
 ```
 
 ## Stopping
@@ -377,7 +387,15 @@ The images are public, so `docker login ghcr.io` should not be required for this
 
 The first pull is large. A full GPU start can use roughly 25-40 GB of Docker disk space before app models download into `%USERPROFILE%\DraftToTake\shared`. Pull progress can pause near 99% while Docker verifies and extracts image layers; this can take several minutes on slower disks.
 
-The beta 17 launcher pulls each enabled service image separately and retries transient `unexpected EOF` failures. If it still fails, restart Docker Desktop and run `start.bat` again.
+When you update between beta tags, Docker may keep the old image tags as well as the new ones. If a beta update appears to consume another 10-40 GB, run:
+
+```text
+cleanup-docker-space.bat
+```
+
+This removes old Draft to Take beta image tags and dangling image layers. It does not delete `%USERPROFILE%\DraftToTake\shared`.
+
+The beta 18 launcher pulls each enabled service image separately and retries transient `unexpected EOF` failures. If it still fails, restart Docker Desktop and run `start.bat` again.
 
 If a pull half-completes or containers later fail with `exec format error` or `input/output error`, run:
 
@@ -393,7 +411,7 @@ start.bat
 
 This repairs only Draft to Take beta containers/images. It does not delete `%USERPROFILE%\DraftToTake\shared`.
 
-If Docker Desktop still shows very high disk usage after repeated failed pulls, run `collect-diagnostics.bat` and check the `Docker Disk Usage` section. Docker Desktop's built-in Troubleshoot / Clean or Purge data option can reset Docker images and containers, but you will need to run `start.bat` again afterwards.
+If Docker Desktop still shows very high disk usage after `cleanup-docker-space.bat`, run `collect-diagnostics.bat` and check the `Docker Disk Usage` section. Docker Desktop's built-in Troubleshoot / Clean or Purge data option can reset Docker images and containers, but you will need to run `start.bat` again afterwards.
 
 ### GPU Not Detected
 

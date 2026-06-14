@@ -13,13 +13,25 @@ if not exist ".env" (
     echo [INFO] Created .env from .env.example.
 )
 
+call :ValidateEnvFile ".env"
+if errorlevel 1 (
+    pause
+    exit /b 1
+)
+
 for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do (
     if not "%%A"=="" set "%%A=%%B"
 )
 
-if "%DRAFT_TO_TAKE_HOME%"=="" set "DRAFT_TO_TAKE_HOME=%USERPROFILE%\DraftToTake"
-if "%DRAFT_TO_TAKE_SHARED_DIR%"=="" set "DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_HOME%\shared"
+if not defined DRAFT_TO_TAKE_HOME set "DRAFT_TO_TAKE_HOME=%USERPROFILE%\DraftToTake"
+if not defined DRAFT_TO_TAKE_SHARED_DIR set "DRAFT_TO_TAKE_SHARED_DIR=%DRAFT_TO_TAKE_HOME%\shared"
 set "DRAFT_TO_TAKE_RUNTIME_ENV=.draft-to-take-runtime.env"
+
+call :ValidateSharedDir
+if errorlevel 1 (
+    pause
+    exit /b 1
+)
 
 for %%d in (
     "%DRAFT_TO_TAKE_SHARED_DIR%\models"
@@ -37,25 +49,31 @@ for %%d in (
     if not exist "%%~d" mkdir "%%~d"
 )
 
-if "%INDTEXTS_FRONTEND_HOST_PORT%"=="" (
+if not defined INDTEXTS_FRONTEND_HOST_PORT (
     for /f %%i in ('powershell -NoProfile -Command "$ports = 3000..3010; foreach ($port in $ports) { if (-not (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)) { $port; break } }"') do set "INDTEXTS_FRONTEND_HOST_PORT=%%i"
 )
 
-if "%INDTEXTS_BACKEND_HOST_PORT%"=="" (
+if not defined INDTEXTS_BACKEND_HOST_PORT (
     for /f %%i in ('powershell -NoProfile -Command "$ports = 8001..8010; foreach ($port in $ports) { if (-not (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)) { $port; break } }"') do set "INDTEXTS_BACKEND_HOST_PORT=%%i"
 )
 
-if "%INDTEXTS_FRONTEND_HOST_PORT%"=="" (
+if not defined INDTEXTS_FRONTEND_HOST_PORT (
     echo [ERROR] Could not find a free frontend host port in the 3000-3010 range.
     pause
     exit /b 1
 )
 
-if "%INDTEXTS_BACKEND_HOST_PORT%"=="" (
+if not defined INDTEXTS_BACKEND_HOST_PORT (
     echo [ERROR] Could not find a free backend host port in the 8001-8010 range.
     pause
     exit /b 1
 )
+
+call :ValidatePort INDTEXTS_FRONTEND_HOST_PORT 3000
+call :ValidatePort INDTEXTS_BACKEND_HOST_PORT 8001
+call :ValidatePort INDTEXTS_SCRIPT_LLM_HOST_PORT 8030
+call :ValidatePort INDTEXTS_SFX_HOST_PORT 8020
+call :ValidatePort INDTEXTS_OMNIVOICE_HOST_PORT 8010
 
 docker info >nul 2>&1
 if errorlevel 1 (
@@ -135,6 +153,8 @@ echo        Pull progress can pause near 99%% while Docker verifies and extracts
 echo        That pause can last several minutes on slower disks.
 echo        Large first-time downloads can occasionally stop with unexpected EOF.
 echo        The launcher will retry each enabled image up to %DRAFT_TO_TAKE_PULL_RETRIES% times.
+echo        After updating between beta tags, old Docker images can remain on disk.
+echo        Run cleanup-docker-space.bat if Docker disk usage grows after updates.
 echo.
 echo [INFO] Current Docker disk usage:
 docker system df
@@ -222,13 +242,39 @@ echo.
 
 if /I not "%DRAFT_TO_TAKE_OPEN_BROWSER%"=="false" (
     echo [INFO] Opening Draft to Take in your browser...
-    start "" "http://localhost:%INDTEXTS_FRONTEND_HOST_PORT%"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process ('http://localhost:' + $env:INDTEXTS_FRONTEND_HOST_PORT)"
 )
 
 timeout /t 5 /nobreak >nul
 docker compose %COMPOSE_ENV_FILES% %COMPOSE_FILES% %COMPOSE_PROFILES_ARGS% logs backend --tail 30
 
 pause
+exit /b 0
+
+:ValidateEnvFile
+set "DTT_ENV_FILE=%~f1"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$path=$env:DTT_ENV_FILE; $badChars=[char[]](34,38,60,62,94,124); $lineNo=0; foreach ($line in Get-Content -LiteralPath $path -ErrorAction Stop) { $lineNo++; $trim=$line.Trim(); if ($trim -eq '' -or $trim.StartsWith('#')) { continue }; $eq=$line.IndexOf('='); if ($eq -lt 1) { continue }; $key=$line.Substring(0,$eq).Trim(); $value=$line.Substring($eq+1); $unsafe=$key -notmatch '^[A-Za-z_][A-Za-z0-9_]*$'; foreach ($ch in $badChars) { if ($value.Contains($ch)) { $unsafe=$true } }; if ($unsafe) { Write-Host ('[ERROR] Unsafe env entry on line {0}: {1}' -f $lineNo,$key); exit 2 } }; exit 0"
+set "DTT_ENV_FILE="
+exit /b %ERRORLEVEL%
+
+:ValidateSharedDir
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p=$env:DRAFT_TO_TAKE_SHARED_DIR; $badChars=[char[]](34,38,60,62,94,124); if ([string]::IsNullOrWhiteSpace($p)) { exit 1 }; foreach ($ch in $badChars) { if ($p.Contains($ch)) { exit 2 } }; try { [System.IO.Path]::GetFullPath($p) | Out-Null; exit 0 } catch { exit 3 }"
+if errorlevel 1 (
+    echo [ERROR] DRAFT_TO_TAKE_SHARED_DIR is not a safe Windows folder path.
+    exit /b 1
+)
+exit /b 0
+
+:ValidatePort
+set "DTT_PORT_VAR=%~1"
+set "DTT_PORT_FALLBACK=%~2"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$name=$env:DTT_PORT_VAR; $p=[Environment]::GetEnvironmentVariable($name); $port=0; if (-not [string]::IsNullOrWhiteSpace($p) -and [int]::TryParse($p, [ref]$port) -and [string]$port -eq $p -and $port -ge 1 -and $port -le 65535) { exit 0 }; exit 2"
+if errorlevel 1 (
+    echo [WARNING] Invalid %~1; using %~2.
+    set "%~1=%~2"
+)
+set "DTT_PORT_VAR="
+set "DTT_PORT_FALLBACK="
 exit /b 0
 
 :CheckComposePort

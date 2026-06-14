@@ -2,12 +2,12 @@ name: draft-to-take-beta
 
 services:
   backend:
-    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-backend:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.17}"
+    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-backend:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.18}"
     platform: linux/amd64
     container_name: draft-to-take-beta-backend
     restart: unless-stopped
     ports:
-      - "${INDTEXTS_BACKEND_HOST_PORT:-8001}:8000"
+      - "127.0.0.1:${INDTEXTS_BACKEND_HOST_PORT:-8001}:8000"
     volumes:
       - "${DRAFT_TO_TAKE_SHARED_DIR}/models:/app/shared/models"
       - "${DRAFT_TO_TAKE_SHARED_DIR}/audio:/app/shared/audio"
@@ -57,12 +57,12 @@ services:
 
   script-llm:
     profiles: ["llm"]
-    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-script-llm:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.17}"
+    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-script-llm:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.18}"
     platform: linux/amd64
     container_name: draft-to-take-beta-script-llm
     restart: unless-stopped
     ports:
-      - "${INDTEXTS_SCRIPT_LLM_HOST_PORT:-8030}:8030"
+      - "127.0.0.1:${INDTEXTS_SCRIPT_LLM_HOST_PORT:-8030}:8030"
     volumes:
       - "${DRAFT_TO_TAKE_SHARED_DIR}/models:/app/shared/models"
       - draft-to-take-beta-script-llm-cache:/root/.cache
@@ -94,12 +94,12 @@ services:
 
   sfx:
     profiles: ["sfx"]
-    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-sfx:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.17}"
+    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-sfx:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.18}"
     platform: linux/amd64
     container_name: draft-to-take-beta-sfx
     restart: unless-stopped
     ports:
-      - "${INDTEXTS_SFX_HOST_PORT:-8020}:8020"
+      - "127.0.0.1:${INDTEXTS_SFX_HOST_PORT:-8020}:8020"
     volumes:
       - "${DRAFT_TO_TAKE_SHARED_DIR}/audio:/app/shared/audio"
       - "${DRAFT_TO_TAKE_SHARED_DIR}/models:/app/shared/models"
@@ -149,12 +149,12 @@ services:
 
   omnivoice:
     profiles: ["omnivoice"]
-    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-omnivoice:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.17}"
+    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-omnivoice:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.18}"
     platform: linux/amd64
     container_name: draft-to-take-beta-omnivoice
     restart: unless-stopped
     ports:
-      - "${INDTEXTS_OMNIVOICE_HOST_PORT:-8010}:8010"
+      - "127.0.0.1:${INDTEXTS_OMNIVOICE_HOST_PORT:-8010}:8010"
     volumes:
       - "${DRAFT_TO_TAKE_SHARED_DIR}/audio:/app/shared/audio"
       - "${DRAFT_TO_TAKE_SHARED_DIR}/models:/app/shared/models"
@@ -179,12 +179,12 @@ services:
       - draft-to-take-beta-network
 
   frontend:
-    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-frontend:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.17}"
+    image: "${DRAFT_TO_TAKE_IMAGE_PREFIX:-ghcr.io/jayspiffy}/draft-to-take-frontend:${DRAFT_TO_TAKE_IMAGE_TAG:-v3.0.0-beta.18}"
     platform: linux/amd64
     container_name: draft-to-take-beta-frontend
     restart: unless-stopped
     ports:
-      - "${INDTEXTS_FRONTEND_HOST_PORT:-3000}:80"
+      - "127.0.0.1:${INDTEXTS_FRONTEND_HOST_PORT:-3000}:80"
     depends_on:
       backend:
         condition: service_healthy
