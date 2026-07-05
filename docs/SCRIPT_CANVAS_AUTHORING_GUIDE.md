@@ -17,6 +17,7 @@ Rules:
 - Use a clear voice-role label, for example `Narrator`, `Mara`, `Jonas`, `Professor Plink`, or `Captain Quibble`.
 - The label does not need to match a prepared voice filename. Assign readable roles to prepared voices later in the Script Canvas Voice Workbench.
 - If you already know the exact prepared voice label you want, you can use that label directly.
+- Only put a colon after a deliberate voice role. If prose contains a colon, keep it under the chosen role, for example `Narrator: The automated response blared from overhead speakers. "All systems nominal."`
 - Keep one speaker per line.
 - Keep one spoken thought per line.
 - Aim for roughly `6` to `18` words per line.

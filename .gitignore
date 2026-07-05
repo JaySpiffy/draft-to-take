@@ -5,3 +5,4 @@ diagnostics/
 shared/
 installer/windows/dist/
 installer/windows/output/
+installer/windows/

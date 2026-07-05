@@ -1,9 +1,12 @@
-# Draft to Take Beta
+# Draft to Take Free Public Beta
 
 **Local-first script-to-audio production studio.**
 
 [![Sponsor JaySpiffy](https://img.shields.io/badge/Sponsor-JaySpiffy-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/JaySpiffy)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-Join%20the%20community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/QJqBpCCg)
+[![License: MIT](https://img.shields.io/badge/Launcher-MIT-blue.svg?style=for-the-badge)](LICENSE)
+
+**Free Public Beta:** this repository contains the public launcher, Docker configuration, docs, samples, and helper scripts. Source is available for the launcher; the core Draft to Take engine/app source is private for now. Model weights are not bundled and download to your own machine when needed.
 
 Turn your scripts into finished multi-speaker audio, complete with emotion, sound design, and timeline mixing, all running locally on your machine.
 
@@ -25,7 +28,7 @@ Write or import a script -> assign prepared voices -> detect emotion -> generate
 
 Use it for audio drama, game dialogue, audiobook tests, YouTube narration, podcast sketches, horror scenes, or any project where you want a local script-to-audio workflow instead of a cloud text box.
 
-This beta repo contains the Docker launcher, configuration, diagnostics scripts, tester docs, and an experimental Windows installer preview. It does not contain the private source code or model weights. The Docker launcher and installer both download supported model files into your own local machine.
+This beta repo contains the Docker launcher, configuration, diagnostics scripts, tester docs, samples, and an experimental Windows installer preview. It does not contain the private core engine/app source code or model weights. The Docker launcher and installer both download supported model files into your own local machine.
 
 Looking for the old prototype? The previous IndexTTS Workflow Studio code is preserved on the [`legacy-v2`](https://github.com/JaySpiffy/draft-to-take/tree/legacy-v2) branch and the [`v2-legacy-final`](https://github.com/JaySpiffy/draft-to-take/tree/v2-legacy-final) tag.
 
@@ -45,8 +48,8 @@ What you are hearing: audio generated through the Draft to Take workflow using l
 
 This is the recommended public beta path while the native installer is still being hardened.
 
-1. Open the latest beta release: [Draft to Take v3.0.0 beta 18](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.18).
-2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.18.zip` from the assets.
+1. Open the latest beta release: [Draft to Take v3.0.0 beta 19](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.19).
+2. Download `DraftToTake-Docker-Launcher-v3.0.0-beta.19.zip` from the assets.
 3. Extract it somewhere simple, for example `C:\DraftToTakeBeta`.
 4. Start Docker Desktop.
 5. Double-click `start.bat`.
@@ -58,28 +61,28 @@ http://localhost:3000
 
 First launch can be slow because Docker images and model files are large. A full GPU start can use roughly 25-40 GB of Docker disk space before app models download into `%USERPROFILE%\DraftToTake\shared`. Pull progress can also pause near 99% while Docker verifies and extracts layers; keep the terminal open and let it finish.
 
-Docker Desktop may keep older beta image tags after updates. If your drive loses a lot of space after updating, run `cleanup-docker-space.bat`; it removes old Draft to Take beta image tags and dangling image layers, but keeps your shared voices, models, projects, and exports.
+Docker Desktop may keep older beta image tags after updates. If your drive loses a lot of space after updating, run `cleanup-docker-space.bat`; it removes old Draft to Take beta image tags and dangling image layers, but keeps your shared voices, models, projects, and exports. If the script reports `0 GB` cleaned and Windows still shows high disk usage, Docker Desktop may be holding free space inside its WSL virtual disk outside the Draft to Take shared folder.
 
 If Docker reports container startup errors such as `exec format error` after a partial or interrupted pull, run `repair-docker-images.bat`, then run `start.bat` again. The repair script removes only Draft to Take beta containers/images and keeps your shared voices, models, projects, and exports.
 
-Beta 18 keeps the refreshed Script Canvas, timeline, voice assignment, and diagnostics fixes from beta 17, then adds Docker disk cleanup guidance, safer launcher helpers, localhost-only service bindings, and backend file-path hardening.
+Beta 19 adds the latest Script Canvas and timeline editing polish, timeline undo/history groundwork, safer clip controls, frontend state cleanup, refreshed docs, and native installer repair work on top of the recent Docker hardening.
 
 The launcher pulls these public images from GitHub Container Registry:
 
 ```text
-ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.18
-ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.18
-ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.18
-ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.18
-ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.18
+ghcr.io/jayspiffy/draft-to-take-backend:v3.0.0-beta.19
+ghcr.io/jayspiffy/draft-to-take-frontend:v3.0.0-beta.19
+ghcr.io/jayspiffy/draft-to-take-script-llm:v3.0.0-beta.19
+ghcr.io/jayspiffy/draft-to-take-omnivoice:v3.0.0-beta.19
+ghcr.io/jayspiffy/draft-to-take-sfx:v3.0.0-beta.19
 ```
 
 ### Option B: Native Windows Installer Experimental
 
 Use this only if you specifically want to test the dockerless installer preview. The Docker launcher above is currently more reliable for public testers.
 
-1. Open [Draft to Take v3.0.0 beta 13](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.13).
-2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.13.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.13/DraftToTake-Native-Setup-v3.0.0-beta.13.exe).
+1. Open [Draft to Take v3.0.0 beta 19](https://github.com/JaySpiffy/draft-to-take/releases/tag/v3.0.0-beta.19).
+2. Download [`DraftToTake-Native-Setup-v3.0.0-beta.19.exe`](https://github.com/JaySpiffy/draft-to-take/releases/download/v3.0.0-beta.19/DraftToTake-Native-Setup-v3.0.0-beta.19.exe).
 3. Run the installer and choose `Full Studio (recommended)`.
 4. Start `Draft to Take` from the Start Menu.
 
@@ -88,7 +91,7 @@ The installer is unsigned during beta, so Windows may show a SmartScreen warning
 Installer checksum:
 
 ```text
-D61F6BDBF5770B8254F9D7349D93EB9D69974FC1771941F3428D2A048D257E8B
+70AEDA06911EE92D74CCE8972E8FF282047802ABD1D0044F376FB2BDF24A93D2
 ```
 
 ## Try This First
@@ -162,9 +165,9 @@ If you are testing the beta for the first time, start with the manuals:
 
 ## Beta Status
 
-`v3.0.0-beta.18` is the latest public Docker launcher release. It uses refreshed public `v3.0.0-beta.18` Docker images.
+`v3.0.0-beta.19` is the latest public Docker launcher release. It uses refreshed public `v3.0.0-beta.19` Docker images.
 
-The native installer preview remains available on `v3.0.0-beta.13`, but it is experimental while startup and generation issues are being worked through.
+The native Windows installer preview is now attached to `v3.0.0-beta.19`, but it remains experimental while clean-machine startup and generation feedback is still being gathered.
 
 All beta container images are public and pullable from GitHub Container Registry:
 
@@ -326,7 +329,7 @@ This keeps the current image tag and removes older Draft to Take beta image tags
 If a new release uses a new Docker image tag, check `.env` and update:
 
 ```text
-DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.18
+DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.19
 ```
 
 ## Stopping
@@ -395,7 +398,7 @@ cleanup-docker-space.bat
 
 This removes old Draft to Take beta image tags and dangling image layers. It does not delete `%USERPROFILE%\DraftToTake\shared`.
 
-The beta 18 launcher pulls each enabled service image separately and retries transient `unexpected EOF` failures. If it still fails, restart Docker Desktop and run `start.bat` again.
+The launcher pulls each enabled service image separately and retries transient `unexpected EOF` failures. If it still fails, restart Docker Desktop and run `start.bat` again.
 
 If a pull half-completes or containers later fail with `exec format error` or `input/output error`, run:
 

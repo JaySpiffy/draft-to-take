@@ -24,7 +24,7 @@ for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do (
 )
 
 if not defined DRAFT_TO_TAKE_IMAGE_PREFIX set "DRAFT_TO_TAKE_IMAGE_PREFIX=ghcr.io/jayspiffy"
-if not defined DRAFT_TO_TAKE_IMAGE_TAG set "DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.17"
+if not defined DRAFT_TO_TAKE_IMAGE_TAG set "DRAFT_TO_TAKE_IMAGE_TAG=v3.0.0-beta.19"
 
 docker info >nul 2>&1
 if errorlevel 1 (
@@ -35,6 +35,9 @@ if errorlevel 1 (
 
 echo [INFO] Docker disk usage before cleanup:
 docker system df
+echo.
+echo [INFO] Docker detailed disk usage before cleanup:
+docker system df -v
 echo.
 echo [INFO] Keeping current Draft to Take image tag:
 echo        %DRAFT_TO_TAKE_IMAGE_TAG%
@@ -60,7 +63,13 @@ echo.
 echo [INFO] Docker disk usage after cleanup:
 docker system df
 echo.
+echo [INFO] Docker Desktop WSL disk files, if present:
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$paths=@((Join-Path $env:LOCALAPPDATA 'Docker\wsl\data\ext4.vhdx'), (Join-Path $env:LOCALAPPDATA 'Docker\wsl\disk\docker_data.vhdx')); foreach ($path in $paths) { if (Test-Path -LiteralPath $path) { $size=[math]::Round((Get-Item -LiteralPath $path).Length / 1GB, 2); Write-Host ('[INFO] {0} = {1} GB' -f $path,$size) } }; Write-Host '[INFO] If Docker freed space internally but Windows did not regain it, Docker Desktop may still be holding it in this WSL virtual disk.'"
+echo.
 echo [OK] Cleanup finished.
+echo Cleaning 0 GB can be normal if no older Draft to Take tags are present.
+echo Docker Desktop can also keep free space inside its WSL virtual disk until Docker/WSL compacts or resets it.
+echo This script does not run global Docker prune, delete Docker volumes, or compact WSL disks because that can affect other Docker projects.
 echo If Docker Desktop still shows high disk usage, open Docker Desktop:
 echo Settings / Resources / Disk image size, or Troubleshoot / Clean or Purge data.
 echo That resets Docker images and containers, but not the shared folder shown above.
